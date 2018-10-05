@@ -10,9 +10,9 @@ branches:
     # dev brach should not be published.
     - dev
 script:
-  - dotnet build -c release
+  - dotnet build -c release $TRAVIS_BUILD_DIR\src -o $TRAVIS_BUILD_DIR\build
 deploy:
   - provider: script
     skip_cleanup: true
-    script: dotnet nuget push .\src\bin\release\NachoColl.AWSCloudformationGenerator4dotNET.*.nupkg $NUGET_APIKEY --source https://www.nuget.org 
+    script: dotnet nuget push $TRAVIS_BUILD_DIR\build\NachoColl.AWSCloudformationGenerator4dotNET.*.nupkg $NUGET_APIKEY --source https://www.nuget.org 
     on: master
