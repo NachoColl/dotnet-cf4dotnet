@@ -10,7 +10,8 @@ branches:
     # dev brach should not be published.
     - dev
 script:
-  - dotnet build -c release .\src -o $TRAVIS_BUILD_DIR\build
+  - echo $TRAVIS_BUILD_DIR
+  - dotnet build -c release "$TRAVIS_BUILD_DIR\src\" -o $TRAVIS_BUILD_DIR\build
 deploy:
   - provider: script
     skip_cleanup: true
