@@ -10,10 +10,10 @@ branches:
     # dev brach should not be published.
     - dev
 script:
-  - sed -i -e "s/TRAVIS_BUILD_NUMBER/${TRAVIS_BUILD_NUMBER^^}/g" $TRAVIS_BUILD_DIR/src/AWSCloudFormationGenerator.csproj
-  - dotnet build $TRAVIS_BUILD_DIR/src/AWSCloudFormationGenerator.csproj -c release -o $TRAVIS_BUILD_DIR/build
+  - sed -i -e "s/TRAVIS_BUILD_NUMBER/${TRAVIS_BUILD_NUMBER^^}/g" $TRAVIS_BUILD_DIR/src/Cloudformation4dotNET.csproj
+  - dotnet build $TRAVIS_BUILD_DIR/src/Cloudformation4dotNET.csproj -c release -o $TRAVIS_BUILD_DIR/build
 deploy:
   - provider: script
     skip_cleanup: true
-    script: dotnet nuget push $TRAVIS_BUILD_DIR/build/NachoColl.AWSCloudformationGenerator4dotNET.*.nupkg --api-key $NUGET_APIKEY --source https://www.nuget.org 
+    script: dotnet nuget push $TRAVIS_BUILD_DIR/build/NachoColl.Cloudformation4dotNET.*.nupkg --api-key $NUGET_APIKEY --source https://www.nuget.org 
     on: master 
