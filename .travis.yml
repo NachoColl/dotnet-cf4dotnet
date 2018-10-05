@@ -1,0 +1,18 @@
+sudo: required
+language: csharp
+mono: none
+dotnet: 2.1
+
+branches:
+  except:
+    # this is required to avoid building tags.
+    - /^v?\d+\.\d+\.\d+(\w*\W*)*$/
+    # dev brach should not be published.
+    - dev
+script:
+  - dotnet build -c release
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: dotnet nuget push .\src\bin\release\NachoColl.AWSCloudformationGenerator4dotNET.*.nupkg $NUGET_APIKEY --source https://www.nuget.org 
+    on: master
