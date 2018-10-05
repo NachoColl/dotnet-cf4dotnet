@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>NachoColl.AWSCloudformationGenerator4dotNET</PackageId>
-    <PackageVersion>0.0.1</PackageVersion>
+    <PackageVersion>0.0.TRAVIS_BUILD_NUMBER</PackageVersion>
     <Authors>Nacho Coll</Authors>
     <Description>AWS Cloudformation Generator 4 dotNET.</Description>
     <AssemblyName>dotnet-cloudformation4dotnet</AssemblyName>
