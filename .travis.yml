@@ -11,9 +11,9 @@ branches:
     - dev
 script:
   - ls $TRAVIS_BUILD_DIR
-  - dotnet build $TRAVIS_BUILD_DIR\src -c release -o $TRAVIS_BUILD_DIR\build
+  - dotnet build $TRAVIS_BUILD_DIR/src/AWSCloudFormationGenerator.csproj -c release -o $TRAVIS_BUILD_DIR/build
 deploy:
   - provider: script
     skip_cleanup: true
-    script: dotnet nuget push $TRAVIS_BUILD_DIR\NachoColl.AWSCloudformationGenerator4dotNET.*.nupkg $NUGET_APIKEY --source https://www.nuget.org 
+    script: dotnet nuget push $TRAVIS_BUILD_DIR/NachoColl.AWSCloudformationGenerator4dotNET.*.nupkg $NUGET_APIKEY --source https://www.nuget.org 
     on: master 
