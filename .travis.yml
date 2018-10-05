@@ -15,5 +15,5 @@ script:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: dotnet nuget push $TRAVIS_BUILD_DIR//build/NachoColl.AWSCloudformationGenerator4dotNET.*.nupkg --api-key $NUGET_APIKEY --source https://www.nuget.org 
+    script: dotnet nuget push $TRAVIS_BUILD_DIR/build/NachoColl.AWSCloudformationGenerator4dotNET.*.nupkg --api-key $NUGET_APIKEY --source https://www.nuget.org 
     on: master 
