@@ -1,6 +1,6 @@
 using System;
 
-namespace AWSCloudFormationGenerator.Lambda
+namespace Cloudformation4dotNET.Lambda
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class LambdaResourceProperties : Attribute {

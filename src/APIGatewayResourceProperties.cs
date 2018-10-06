@@ -1,6 +1,6 @@
 using System;
 
-namespace AWSCloudFormationGenerator.APIGateway
+namespace Cloudformation4dotNET.APIGateway
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class APIGatewayResourceProperties : Attribute {

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>NachoColl.Cloudformation4dotNET</PackageId>
-    <PackageVersion>0.0.TRAVIS_BUILD_NUMBER</PackageVersion>
+    <PackageVersion>000</PackageVersion>
     <Authors>Nacho Coll</Authors>
     <Description>Create cloudformation templates from dotNET code.</Description>
     <AssemblyName>dotnet-cloudformation4dotnet</AssemblyName>
@@ -10,10 +10,21 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <DefaultItemExcludes>$(DefaultItemExcludes);api-template\*</DefaultItemExcludes>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
   </ItemGroup>
+
+  <Target Name="CopyFiles" AfterTargets="build">
+    <Copy DestinationFolder="$(OutputPath)\api-template" SourceFiles="api-template\MyApi.cs" SkipUnchangedFiles="false" />
+    <Copy DestinationFolder="$(OutputPath)\api-template" SourceFiles="api-template\MyApi.csproj" SkipUnchangedFiles="false" />
+    <Copy DestinationFolder="$(OutputPath)\api-template" SourceFiles="api-template\sam.yml" SkipUnchangedFiles="false" />
+    <Copy DestinationFolder="$(OutputPath)\api-template" SourceFiles="api-template\samx.yml" SkipUnchangedFiles="false" />
+  </Target>
   
 </Project>

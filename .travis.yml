@@ -10,7 +10,7 @@ branches:
     # dev brach should not be published.
     - dev
 script:
-  - sed -i -e "s/TRAVIS_BUILD_NUMBER/${TRAVIS_BUILD_NUMBER^^}/g" $TRAVIS_BUILD_DIR/src/Cloudformation4dotNET.csproj
+  - sed -i -e "s/000/${TRAVIS_BUILD_NUMBER^^}/g" $TRAVIS_BUILD_DIR/src/Cloudformation4dotNET.csproj
   - dotnet build $TRAVIS_BUILD_DIR/src/Cloudformation4dotNET.csproj -c release -o $TRAVIS_BUILD_DIR/build
 deploy:
   - provider: script

@@ -8,8 +8,9 @@ using System.Text.RegularExpressions;
 
 using Newtonsoft.Json;
 
+using Microsoft.Extensions.CommandLineUtils;
 
-namespace AWSCloudFormationGenerator
+namespace Cloudformation4dotNET
 {
     class Injection
     {
@@ -20,29 +21,100 @@ namespace AWSCloudFormationGenerator
             public bool EnableCORS = false;
         }
 
-        // args[0]: assembly file full path
-        // args[1]: cloudformation files path
-        // args[2]: environment (test / staging / prod)
-        // args[3]: build version
         static int Main(string[] args)
         {
 
             try{
+             
+                var app = new CommandLineApplication();
+                app.Name = "Cloudformation4dotNet";
 
+                app.Command("init", config => {
+                    config.Description  = "Initialize a base Cloudformation4dotNET project.";
+                    var outputPah       = config.Option("-o|--ouput <output-path>", "Project path (default: './').", CommandOptionType.SingleValue);
+
+                    config.OnExecute(()=>{ 
+                        init(outputPah.HasValue() ? outputPah.Values[0] : "./"); 
+                        return 0;
+                    });
+                });
+
+                app.Command("api", config => {
+                    config.Description  = "Creates an API Gateway Cloudformation template from your dotNet code.";
+
+                    var dllSourceFile   = config.Argument("source", "Your dotnet dll source file (e.g. ./src/my-dotnet-api.dll).", false);
+
+                    // optionals
+                    var environmentKey  = config.Option("-e|--environment <environment-name>", "Environment name (default: 'prod').", CommandOptionType.SingleValue);
+                    var buildVersion    = config.Option("-b|--build <build-version>", "Build version number used to create incremental templates (default: '1').", CommandOptionType.SingleValue);
+                    var outputPah       = config.Option("-o|--ouput <output-path>", "Cloudformation templates will get created here (default: './').", CommandOptionType.SingleValue);
+                  
+                    
+                    var cfBaseTemplate = config.Argument("source", "your dotnet dll source file path", false);
+                    config.OnExecute(()=>{ 
+                        if(!string.IsNullOrWhiteSpace(dllSourceFile.Value)){
+                            return api( dllSourceFile.Value, 
+                                        environmentKey.HasValue() ? environmentKey.Values[0] : "prod", 
+                                        buildVersion.HasValue() ? int.Parse(buildVersion.Values[0]) : 1, 
+                                        outputPah.HasValue() ? outputPah.Values[0] : "./");
+                        }else{
+                            app.ShowHelp();
+                            return -1;
+                        }       
+                     });   
+                });
+
+                 //give people help with --help
+                app.HelpOption("-? | -h | --help");
+                app.Execute(args);
+                return 0;
+
+            } catch(Exception e){
+                Console.WriteLine(e.Message);
+                return -1;
+            }
+        }
+
+        static void init(string outputPath = "."){
+            try{
+                if (!System.IO.Directory.Exists(outputPath)){
+                    System.IO.Directory.CreateDirectory(outputPath);
+                }
+                UriBuilder uri = new UriBuilder(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase));
+                string sourcePath = Uri.UnescapeDataString(uri.Path);
+
+                System.IO.File.Copy(System.IO.Path.Combine(sourcePath + "\\api-template", "MyApi.cs"), System.IO.Path.Combine(outputPath, "MyApi.cs"), true);
+                System.IO.File.Copy(System.IO.Path.Combine(sourcePath + "\\api-template", "MyApi.csproj"), System.IO.Path.Combine(outputPath, "MyApi.csproj"), true);
+            
+                System.IO.File.Copy(System.IO.Path.Combine(sourcePath + "\\api-template", "sam.yml"), System.IO.Path.Combine(outputPath, "sam.yml"), true);
+                System.IO.File.Copy(System.IO.Path.Combine(sourcePath + "\\api-template", "samx.yml"), System.IO.Path.Combine(outputPath, "samx.yml"), true);
+            
+            } catch(Exception e){
+                Console.WriteLine(e);
+            }
+        }
+
+        static int api(string dllSourceFile, string environmentKey = "prod", int buildVersion = 1, string outputPah = "./")
+        {
+               
+            try{
+
+                Console.WriteLine($"{dllSourceFile}, {environmentKey}, {buildVersion}, {outputPah} ");
+                return 1;
                 /*
                     Inject resources to BASE template.
                  */
-                string samFile = string.Format("{0}/sam.yml", args[1]);
-                string samBaseFile = string.Format("{0}/sam-base.yml", args[1]);
-                string environment = args[2];
+                string samFile = string.Format("{0}/sam.yml", outputPah);
+                string samBaseFile = string.Format("{0}/sam-base.yml", outputPah);
+                
 
                 // Build the cloudformation API Gateway related resources string to inject (including lambdas).
-                List<AWSAPIMethodInfo> APIFunctionsList = GetAPIFunctions(args[0]);
-                string cloudformationAPIResources = GetCloudformationAPIResourcesString(APIFunctionsList, environment);
+                List<AWSAPIMethodInfo> APIFunctionsList = GetAPIFunctions(dllSourceFile);
+                string cloudformationAPIResources = GetCloudformationAPIResourcesString(APIFunctionsList, environmentKey);
  
                 // Build the cloudformation Lambdas related resources string to inject.
-                List<AWSAPIMethodInfo> LambdaFunctionsList = GetLambdaFunctions(args[0]);
-                string cloudformationLambdaResources = GetCloudformationLambdaResourcesString(LambdaFunctionsList, environment);
+                List<AWSAPIMethodInfo> LambdaFunctionsList = GetLambdaFunctions(dllSourceFile);
+                string cloudformationLambdaResources = GetCloudformationLambdaResourcesString(LambdaFunctionsList, environmentKey);
 
                 string source = System.IO.File.ReadAllText(samFile);   
                 if (File.Exists(samBaseFile)) File.Delete(samBaseFile);
@@ -57,15 +129,13 @@ namespace AWSCloudFormationGenerator
                     Inject lambdas versions.
                 */
                 
-                int buildVersion = Int32.Parse(args[3]);
-                
-                string samXFile = string.Format("{0}/samx.yml", args[1]);
-                string samEnvironmentFile = string.Format("{0}/sam-{1}.yml", args[1], environment);
+                string samXFile = string.Format("{0}/samx.yml", outputPah);
+                string samEnvironmentFile = string.Format("{0}/sam-{1}.yml", outputPah, environmentKey);
              
                 // Build the cloudformation lambda's versions resources string to inject.      
                 string cloudformationLambdasVersionsResources = 
-                    GetCloudformationLambdasVersionsResourcesString(APIFunctionsList, environment, buildVersion) +
-                    GetCloudformationLambdasVersionsResourcesString(LambdaFunctionsList, environment, buildVersion);
+                    GetCloudformationLambdasVersionsResourcesString(APIFunctionsList, environmentKey, buildVersion) +
+                    GetCloudformationLambdasVersionsResourcesString(LambdaFunctionsList, environmentKey, buildVersion);
 
                 string sourceX = System.IO.File.ReadAllText(samXFile);   
                 if (File.Exists(samEnvironmentFile)) File.Delete(samEnvironmentFile);
