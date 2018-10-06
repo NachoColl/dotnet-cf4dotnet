@@ -21,7 +21,7 @@ namespace Cloudformation4dotNET
             public bool EnableCORS = false;
         }
 
-        static int Main(string[] args)
+        static void Main(string[] args)
         {
 
             try{
@@ -31,16 +31,19 @@ namespace Cloudformation4dotNET
 
                 app.Command("init", config => {
                     config.Description  = "Initialize a base Cloudformation4dotNET project.";
+                    config.HelpOption("-? | -h | --help"); //show help on --help
+
                     var outputPah       = config.Option("-o|--ouput <output-path>", "Project path (default: './').", CommandOptionType.SingleValue);
 
                     config.OnExecute(()=>{ 
                         init(outputPah.HasValue() ? outputPah.Values[0] : "./"); 
                         return 0;
-                    });
+                    });               
                 });
 
                 app.Command("api", config => {
                     config.Description  = "Creates an API Gateway Cloudformation template from your dotNet code.";
+                    config.HelpOption("-? | -h | --help"); //show help on --help
 
                     var dllSourceFile   = config.Argument("source", "Your dotnet dll source file (e.g. ./src/my-dotnet-api.dll).", false);
 
@@ -49,7 +52,7 @@ namespace Cloudformation4dotNET
                     var buildVersion    = config.Option("-b|--build <build-version>", "Build version number used to create incremental templates (default: '1').", CommandOptionType.SingleValue);
                     var outputPah       = config.Option("-o|--ouput <output-path>", "Cloudformation templates will get created here (default: './').", CommandOptionType.SingleValue);
                   
-                    
+
                     var cfBaseTemplate = config.Argument("source", "your dotnet dll source file path", false);
                     config.OnExecute(()=>{ 
                         if(!string.IsNullOrWhiteSpace(dllSourceFile.Value)){
@@ -66,12 +69,12 @@ namespace Cloudformation4dotNET
 
                  //give people help with --help
                 app.HelpOption("-? | -h | --help");
-                app.Execute(args);
-                return 0;
+                var result = app.Execute(args);
+                Environment.Exit(result);
 
             } catch(Exception e){
                 Console.WriteLine(e.Message);
-                return -1;
+                Environment.Exit(-1);
             }
         }
 
