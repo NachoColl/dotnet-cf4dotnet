@@ -102,8 +102,6 @@ namespace Cloudformation4dotNET
                
             try{
 
-                Console.WriteLine($"{dllSourceFile}, {environmentKey}, {buildVersion}, {outputPah} ");
-                return 1;
                 /*
                     Inject resources to BASE template.
                  */
@@ -214,8 +212,8 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(1, String.Format("{0}APIResource:", ReplaceNonAlphanumeric(pathParts.Count()==1 ? function.MethodName : pathParts[0]))));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Resource"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
-                    cloudformationResources.AppendLine(IndentText(3, "ParentId: !GetAtt nWAYApi.RootResourceId"));
+                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
+                    cloudformationResources.AppendLine(IndentText(3, "ParentId: !GetAtt myAPI.RootResourceId"));
                     cloudformationResources.AppendLine(IndentText(3, String.Format("PathPart: {0}", pathParts[0])));
                     cloudformationResources.AppendLine();
                 }          
@@ -232,9 +230,9 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(1, String.Format("{0}Function:", functionCFResourceName)));
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::Serverless::Function"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: nway-{0}", function.MethodName)));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: nwayapi::nWAY.API::{0} ", function.MethodName)));
-                cloudformationResources.AppendLine(IndentText(3, "Role: !Sub \"arn:aws:iam::${AWS::AccountId}:role/nway-lambdas\""));
+                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: myapi-{0}", function.MethodName)));
+                cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: nwayapi::MyAPI.API::{0} ", function.MethodName)));
+                cloudformationResources.AppendLine(IndentText(3, "Role: !Ref myAPILambdaExecutionRole"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
                 cloudformationResources.AppendLine();
 
@@ -245,7 +243,7 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(1, String.Format("{0}APIResource:", ReplaceNonAlphanumeric(pathParts[1]))));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Resource"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                     cloudformationResources.AppendLine(IndentText(3, "ParentId: !Ref " + String.Format("{0}APIResource", ReplaceNonAlphanumeric(pathParts[0]))));
                     cloudformationResources.AppendLine(IndentText(3, String.Format("PathPart: {0}", pathParts[1])));
                     cloudformationResources.AppendLine();  
@@ -255,7 +253,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(1, String.Format("{0}APIMethod:", functionCFResourceName)));
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Method"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
+                cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("ResourceId: !Ref {0}", String.Format("{0}APIResource", ReplaceNonAlphanumeric(pathParts.Count()==1 ? function.MethodName : pathParts[pathParts.Count()-1])))));
                 cloudformationResources.AppendLine(IndentText(3, "HttpMethod: POST"));
                 cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));
@@ -263,18 +261,19 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(4, "Type: AWS_PROXY"));
                 cloudformationResources.AppendLine(IndentText(4, "IntegrationHttpMethod: POST"));
                 cloudformationResources.AppendLine(IndentText(4, "Uri: !Sub \"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${" + functionCFResourceName + "Function.Arn}:${!stageVariables.lambdaAlias}/invocations\""));
-                cloudformationResources.AppendLine(IndentText(4, "Credentials: !Sub \"arn:aws:iam::${AWS::AccountId}:role/nway-lambdas\""));
+                cloudformationResources.AppendLine(IndentText(4, "Credentials: !Ref myAPILambdaExecutionRole"));
                 cloudformationResources.AppendLine();
 
 
                 if (function.EnableCORS){
+                    #region ENABLE CORS
                     cloudformationResources.AppendLine();
                     cloudformationResources.AppendLine(IndentText(1,"# enabling OPTIONS for " + function.MethodName));
                     cloudformationResources.AppendLine();
                     cloudformationResources.AppendLine(IndentText(1, String.Format("{0}APIMethodOPTIONS:", functionCFResourceName)));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Method"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                     cloudformationResources.AppendLine(IndentText(3, String.Format("ResourceId: !Ref {0}", String.Format("{0}APIResource", ReplaceNonAlphanumeric(pathParts.Count()==1 ? function.MethodName : pathParts[pathParts.Count()-1])))));
                     cloudformationResources.AppendLine(IndentText(3, "HttpMethod: OPTIONS"));
                     cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));
@@ -300,6 +299,7 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(5,"  method.response.header.Access-Control-Allow-Origin: true"));
                     cloudformationResources.AppendLine(IndentText(4,"   StatusCode: '200'"));
                     cloudformationResources.AppendLine();
+                    #endregion
                 }
              
             }
@@ -310,11 +310,11 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine();
                     cloudformationResources.AppendLine(IndentText(1, "Test:"));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Stage"));
-                    cloudformationResources.AppendLine(IndentText(2, "DependsOn: nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(2, "DependsOn: myAPI"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
                     cloudformationResources.AppendLine(IndentText(3, "StageName: test"));
                     cloudformationResources.AppendLine(IndentText(3, "Description: API Test"));
-                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                     cloudformationResources.AppendLine(IndentText(3, "DeploymentId: !Ref TestDeployment"));
                     cloudformationResources.AppendLine(IndentText(3, "Variables:"));
                     cloudformationResources.AppendLine(IndentText(4, "lambdaAlias: test"));
@@ -323,7 +323,7 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(1, "TestDeployment:"));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Deployment"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                     cloudformationResources.AppendLine(IndentText(2, "DependsOn:"));
                     foreach(AWSAPIMethodInfo function in functions){
                             string functionCFResourceName = ReplaceNonAlphanumeric(function.MethodName);
@@ -338,11 +338,11 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine();
                     cloudformationResources.AppendLine(IndentText(1, "Staging:"));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Stage"));
-                    cloudformationResources.AppendLine(IndentText(2, "DependsOn: nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(2, "DependsOn: myAPI"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
                     cloudformationResources.AppendLine(IndentText(3, "StageName: staging"));
                     cloudformationResources.AppendLine(IndentText(3, "Description: API Staging"));
-                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                     cloudformationResources.AppendLine(IndentText(3, "DeploymentId: !Ref StagingDeployment"));
                     cloudformationResources.AppendLine(IndentText(3, "Variables:"));
                     cloudformationResources.AppendLine(IndentText(4, "lambdaAlias: staging"));
@@ -351,7 +351,7 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(1, "StagingDeployment:"));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Deployment"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                     cloudformationResources.AppendLine(IndentText(2, "DependsOn:"));
                     foreach(AWSAPIMethodInfo function in functions){
                         string functionCFResourceName = ReplaceNonAlphanumeric(function.MethodName);
@@ -361,13 +361,13 @@ namespace Cloudformation4dotNET
 
                     // ProdDeployment
                     cloudformationResources.AppendLine();
-                    cloudformationResources.AppendLine(IndentText(1, "Test:"));
+                    cloudformationResources.AppendLine(IndentText(1, "Prod:"));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Stage"));
-                    cloudformationResources.AppendLine(IndentText(2, "DependsOn: nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(2, "DependsOn: myAPI"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
                     cloudformationResources.AppendLine(IndentText(3, "StageName: prod"));
                     cloudformationResources.AppendLine(IndentText(3, "Description: API Production"));
-                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                     cloudformationResources.AppendLine(IndentText(3, "DeploymentId: !Ref ProdDeployment"));
                     cloudformationResources.AppendLine(IndentText(3, "Variables:"));
                     cloudformationResources.AppendLine(IndentText(4, "lambdaAlias: prod"));
@@ -376,7 +376,7 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(1, "ProdDeployment:"));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Deployment"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref nWAYApi"));
+                    cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                     cloudformationResources.AppendLine(IndentText(2, "DependsOn:"));
                     foreach(AWSAPIMethodInfo function in functions){
                         string functionCFResourceName = ReplaceNonAlphanumeric(function.MethodName);
@@ -403,15 +403,13 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(1, String.Format("{0}Function:", functionCFResourceName)));
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::Serverless::Function"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: nway-{0}", function.MethodName)));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: nwayapi::nWAY.Lambdas.Handlers::{0} ", function.MethodName)));
+                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: myapi-{0}", function.MethodName)));
+                cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: nwayapi::MyAPI.Lambdas.Handlers::{0} ", function.MethodName)));
                 
-                cloudformationResources.AppendLine(IndentText(3, "Role: !Sub \"arn:aws:iam::${AWS::AccountId}:role/nway-lambdas\""));
+                cloudformationResources.AppendLine(IndentText(3, "Role: !Ref myAPILambdaExecutionRole"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
                 cloudformationResources.AppendLine();
-
-            
-             
+         
             }
           
             return cloudformationResources.ToString();
@@ -437,7 +435,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::Lambda::Version"));
                 cloudformationResources.AppendLine(IndentText(2, "DeletionPolicy: Retain"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: nway-{0}", function.MethodName))); 
+                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: myapi-{0}", function.MethodName))); 
                 cloudformationResources.AppendLine();
                 
                 cloudformationResources.AppendLine();
@@ -446,7 +444,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(2, "DeletionPolicy: Retain"));
                 cloudformationResources.AppendLine(IndentText(2, String.Format("DependsOn: {0}Version{1}", functionCFResourceName, environmentVersion)));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: nway-{0}", function.MethodName)));
+                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: myapi-{0}", function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionVersion: !GetAtt {0}Version{1}.Version", functionCFResourceName, environmentVersion)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Name: {0}", Environment)));
                 cloudformationResources.AppendLine();

@@ -4,6 +4,10 @@ Description: My API Base Resources.
 
 Parameters:
 
+  APIRootName:
+    Type: String
+    Default: myapi
+
   S3Bucket:
     Type: String
 
@@ -23,7 +27,7 @@ Globals:
       Key: !Sub "api/${PackageBaseFileName}-${PackageVersion}.zip"     
     Timeout: 60
     Tags: 
-      appcode: myapi
+      appcode: !Ref APIRootName
           
 Resources:
 
@@ -31,15 +35,44 @@ Resources:
   # API Gateway definition                                                        #
   #################################################################################
 
+  
   myAPI: 
     Type: "AWS::ApiGateway::RestApi"
     Properties:
       Description: "My API"
-      Name: "my-api"
+      Name: !Ref APIRootName
       EndpointConfiguration:
         Types:
         - REGIONAL
 
+  #################################################################################
+  # Lambda Execution Role                                                         #
+  #################################################################################
+
+  myAPILambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+  
+            
   # do not delete this mark
   # deploy will use it to inject cloudformation resources.
 

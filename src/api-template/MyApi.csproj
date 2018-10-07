@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="Amazon.Lambda.Tools" Version="2.1.1" />
-    <DotNetCliToolReference Include="NachoColl.Cloudformation4dotNET" Version="*0.0.*" />
+    <DotNetCliToolReference Include="NachoColl.Cloudformation4dotNET" Version="0.0.*" />
   </ItemGroup>
 
 </Project>
