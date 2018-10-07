@@ -1,24 +1,24 @@
 # Description
 
-Cloudformation4dotNET (cf4dotNet) is a tool you can use to automatically create the required cloudformation templates from your dotNET code. The idea is that you use it on your deployment pipelines, so you finally just work on the code side, without having to worry on manually updating the CF templates.
+Cloudformation4dotNET (cf4dotNet) is a tool you can use to automatically create the required cloudformation templates from your dotNET code. The idea is that you use it on your deployment pipelines, so you finally work on the code side, without having to worry about CF templates manuals.
 
 # How to use it
 
-### Install the template: 
+To start using this tool, **install the required templates**,
 
 ```
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates.DotNetNew
 ```
 
-### Create a new API Gateway project:
+and **create a simple project example**:
 
 ```
 dotnet new cf4dotnet
 ```
 
-This will create a simple project including the next files:
+This will create a c-sharp project including the next files:
 
-- ```MyApi.cs``` as a simple API Gateway function example,
+- ```MyApi.cs``` as a simple API Gateway functions class example,
 
 ```csharp
  /* A simple function to check if our API is up and running. */
@@ -35,20 +35,25 @@ public APIGatewayProxyResponse CheckStatus(APIGatewayProxyRequest Request, ILamb
 
 - ```sam.yml``` and ```samx.yml``` as the base cloudformation templates that will be used to inject your code-related resources.
 
-Check everything is corrrectly setup.
+### How to use cf4dotNET tool
+
+First, build your project,
 
 ```
 dotnet build
 ```
 
-
-### Execute cf4dotNET tool
-
-To dynamically create your code AWS Cloudformation templates, use the next command:
+To dynamically create your code AWS Cloudformation templates, ```dotnet-cf4dotnet``` indicating the next available options:
 
 ```
-dotnet-cf4dotnet <your-code-dll-file>
+dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name>
 ```
+To get an idea on how you can use it, I personally call this command on every push I make on Git that should get deployed to AWS. I build the code, test it, and then dynamically create the related Cloudformation template using a new <build-version> (I use $TRAVIS_BUILD_NUMBER in my case).
 
+# Note
+
+This is an initial 0.0.x version of the tool that mainly fits for my personal deployment needs!
+
+Feel free to push/ask for improvements, issues or whatever.
 
 
