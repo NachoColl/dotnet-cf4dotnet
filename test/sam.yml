@@ -6,7 +6,7 @@ Parameters:
 
   APIRootName:
     Type: String
-    Default: myapi
+    Default: test
 
   S3Bucket:
     Type: String

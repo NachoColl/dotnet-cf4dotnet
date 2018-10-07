@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Nacho Coll",
+    "tags": {
+        "language": "C#"   
+    },
+    "classifications": [ "AWS" ],
+    "identity": "NachoColl.Cloudformation4dotNET.CSharp",
+    "name": "Sample AWS API Gateway project to use with Cloudformation4dotNET",
+    "shortName": "cf4dotnet",
+    "preferNameDirectory" : true,
+    "sourceName": "MyAPI"
+}

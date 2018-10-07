@@ -23,24 +23,10 @@ namespace Cloudformation4dotNET
 
         static void Main(string[] args)
         {
-
             try{
              
                 var app = new CommandLineApplication();
-                app.Name = "Cloudformation4dotNet";
-
-                app.Command("init", config => {
-                    config.Description  = "Initialize a base Cloudformation4dotNET project.";
-                    config.HelpOption("-? | -h | --help"); //show help on --help
-
-                    var outputPah       = config.Option("-o|--ouput <output-path>", "Project path (default: './').", CommandOptionType.SingleValue);
-
-                    config.OnExecute(()=>{ 
-                        init(outputPah.HasValue() ? outputPah.Values[0] : "./"); 
-                        return 0;
-                    });               
-                });
-
+                app.Name = "cf4dotNet";
                 app.Command("api", config => {
                     config.Description  = "Creates an API Gateway Cloudformation template from your dotNet code.";
                     config.HelpOption("-? | -h | --help"); //show help on --help
@@ -75,25 +61,6 @@ namespace Cloudformation4dotNET
             } catch(Exception e){
                 Console.WriteLine(e.Message);
                 Environment.Exit(-1);
-            }
-        }
-
-        static void init(string outputPath = "."){
-            try{
-                if (!System.IO.Directory.Exists(outputPath)){
-                    System.IO.Directory.CreateDirectory(outputPath);
-                }
-                UriBuilder uri = new UriBuilder(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase));
-                string sourcePath = Uri.UnescapeDataString(uri.Path);
-
-                System.IO.File.Copy(System.IO.Path.Combine(sourcePath + "\\api-template", "MyApi.cs"), System.IO.Path.Combine(outputPath, "MyApi.cs"), true);
-                System.IO.File.Copy(System.IO.Path.Combine(sourcePath + "\\api-template", "MyApi.csproj"), System.IO.Path.Combine(outputPath, "MyApi.csproj"), true);
-            
-                System.IO.File.Copy(System.IO.Path.Combine(sourcePath + "\\api-template", "sam.yml"), System.IO.Path.Combine(outputPath, "sam.yml"), true);
-                System.IO.File.Copy(System.IO.Path.Combine(sourcePath + "\\api-template", "samx.yml"), System.IO.Path.Combine(outputPath, "samx.yml"), true);
-            
-            } catch(Exception e){
-                Console.WriteLine(e);
             }
         }
 
