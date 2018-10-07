@@ -7,14 +7,11 @@
     <Description>Create cloudformation templates from dotNET code.</Description>
     <AssemblyName>dotnet-cloudformation4dotnet</AssemblyName>
 
-    <PackageType>DotnetCliTool</PackageType>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-
+    
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>cf4dotnet</ToolCommandName>
-    
+    <TargetFramework>netcoreapp2.1</TargetFramework>
 
     <DefaultItemExcludes>$(DefaultItemExcludes);api-template\*</DefaultItemExcludes>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
