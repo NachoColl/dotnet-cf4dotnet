@@ -16,7 +16,5 @@ script:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: 
-      - dotnet nuget push $TRAVIS_BUILD_DIR/build/NachoColl.Cloudformation4dotNET.*.nupkg --api-key $NUGET_APIKEY --source https://www.nuget.org 
-      - dotnet nuget push $TRAVIS_BUILD_DIR/build/templates/NachoColl.Cloudformation4dotNET.Templates.DotNetNew.*.nupkg --api-key $NUGET_APIKEY --source https://www.nuget.org 
+    script: dotnet nuget push $TRAVIS_BUILD_DIR/build/NachoColl.Cloudformation4dotNET.*.nupkg --api-key $NUGET_APIKEY --source https://www.nuget.org && dotnet nuget push $TRAVIS_BUILD_DIR/build/templates/NachoColl.Cloudformation4dotNET.Templates.DotNetNew.*.nupkg --api-key $NUGET_APIKEY --source https://www.nuget.org 
     on: master 
