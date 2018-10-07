@@ -5,7 +5,7 @@
     <PackageVersion>0.0.000</PackageVersion>
     <Authors>Nacho Coll</Authors>
     <Description>Create cloudformation templates from dotNET code.</Description>
-    <AssemblyName>dotnet-cloudformation4dotnet</AssemblyName>
+    <AssemblyName>dotnet-cf4dotnet</AssemblyName>
 
     <PackageType>DotnetCliTool</PackageType>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>

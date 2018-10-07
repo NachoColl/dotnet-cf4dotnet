@@ -11,6 +11,7 @@ branches:
     - dev
 script:
   - sed -i -e "s/000/${TRAVIS_BUILD_NUMBER^^}/g" $TRAVIS_BUILD_DIR/src/Cloudformation4dotNET.csproj
+  - sed -i -e "s/000/${TRAVIS_BUILD_NUMBER^^}/g" $TRAVIS_BUILD_DIR/src/templates/templates.csproj
   - dotnet build $TRAVIS_BUILD_DIR/src/Cloudformation4dotNET.csproj -c release -o $TRAVIS_BUILD_DIR/build
   - dotnet build $TRAVIS_BUILD_DIR/src/templates/templates.csproj -c release -o $TRAVIS_BUILD_DIR/build/templates
 deploy:
