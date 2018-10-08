@@ -47,7 +47,7 @@ dotnet publish -o ./artifact --framework netcoreapp2.0 -c Release
 
 ### Running cf4dotNET tool
 
-Once your code builds, to get the Cloudformation templates you'll need to deploy, run ```dotnet-cf4dotnet``` as follows:
+To create the Cloudformation templates you'll need to deploy your code, run ```dotnet-cf4dotnet``` as follows:
 
 ```shell
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name>
@@ -60,19 +60,18 @@ dotnet cf4dotnet api E:\Git\public\dotnet-cf4dotnet\test\artifact\MyApi.dll -b 1
 ```
 you will get the next [sam-base.yml](./test/sam-base.yml) and [sam-test.yml](./test/sam-test.yml) cloudformation templates.
 
-
  
 # Note
 
-This is an initial 0.0.x version of the tool that fits for my personal deployment needs! I will add new features as soon as I need them. Please feel free to push/ask for improvements, issues or whatever. 
+This is an initial 0.0.x version of that fits for my deployment needs! I will check for issues and add new features as soon as I need them. Please feel free to push/ask for improvements, questions or whatever. 
 
 How I use it? 
 
-* I work on my API Gateway functions code,
-* and push code to GitHub, trigering [travis](https://travis-ci.com) pipeline that mainly:
-    * builds and tests the code,
-    * sends the code artifact to S3,
-    * runs cf4dotnet to create the required CF templates (using  $TRAVIS_BUILD_NUMBER as the build-version I use to version my Lambdas), and fnially,
-    * deploy the CF templates to my AWS account.
+By using dotnet-cf4dotnet I only have to work on code, and let [travis](https://travis-ci.com) pipeline deploy the updates to my AWS account. The related pipeline is quite simple and mainly:
+
+* builds and tests the code,
+* sends the code artifact to S3,
+* runs cf4dotnet to create the required CF templates (using  $TRAVIS_BUILD_NUMBER as the build-version I use to version my Lambdas), and fnially,
+* deploy the CF templates to my AWS account.
 
 Hope you get ideas on how to build your own pipes ;)
