@@ -4,6 +4,8 @@ Use **Cloudformation4dotNET** (cf4dotNet) to automatically create the  cloudform
 
 The idea is that you use it on your deployment pipelines, so you only have to work on the code side, without worrying about the related CF templates.
 
+[![Build Status](https://travis-ci.com/NachoColl/dotnet-cf4dotnet.svg?branch=master)](https://travis-ci.com/NachoColl/dotnet-cf4dotnet)
+
 # How to use it
 
 To start, **install the Cloudformation4dotNET templates**,
