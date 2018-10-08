@@ -1,24 +1,26 @@
 # Description
 
-Cloudformation4dotNET (cf4dotNet) is a tool you can use to automatically create the required cloudformation templates from your dotNET code. The idea is that you use it on your deployment pipelines, so you finally work on the code side, without having to worry about CF templates manuals.
+Use **Cloudformation4dotNET** (cf4dotNet) to automatically create the  cloudformation templates you need to deploy your dotNET code on AWS. 
+
+The idea is that you use it on your deployment pipelines, so you only have to work on the code side, without worrying about the related CF templates.
 
 # How to use it
 
-To start using this tool, **install the required templates**,
+To start, **install the Cloudformation4dotNET templates**,
 
 ```
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates.DotNetNew
 ```
 
-and **create a simple project example**:
+and create a new project example:
 
 ```
 dotnet new cf4dotnet
 ```
 
-This will create a c-sharp project including the next files:
+This will create a project including the next files:
 
-- ```MyApi.cs``` as a simple API Gateway functions class example,
+- ```MyApi.cs```, a simple API Gateway functions class example,
 
 ```csharp
  /* A simple function to check if our API is up and running. */
@@ -31,29 +33,44 @@ public APIGatewayProxyResponse CheckStatus(APIGatewayProxyRequest Request, ILamb
 };
 ```
 
-- the related ```MyApi.csproj``` project file with the required initial dependencies,
+- the related ```MyApi.csproj``` project file, 
 
-- ```sam.yml``` and ```samx.yml``` as the base cloudformation templates that will be used to inject your code-related resources.
+- and two cloudformation templates, ```sam.yml``` and ```samx.yml```, that will be used as your base cloudformation templates.
 
-### How to use cf4dotNET tool
+Build your project as you will do for publishing your code on AWS, for example:
 
-First, build your project,
-
-```
-dotnet build
+```shell
+dotnet publish -o ./artifact --framework netcoreapp2.0 -c Release
 ```
 
-To dynamically create your code AWS Cloudformation templates, ```dotnet-cf4dotnet``` indicating the next available options:
+### Running cf4dotNET tool
 
-```
+Once your code builds, to get the Cloudformation templates you'll need to deploy, run ```dotnet-cf4dotnet``` as follows:
+
+```shell
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name>
 ```
-To get an idea on how you can use it, I personally call this command on every push I make on Git that should get deployed to AWS. I build the code, test it, and then dynamically create the related Cloudformation template using a new <build-version> (I use $TRAVIS_BUILD_NUMBER in my case).
 
+This command will use ```sam.yml``` and ```samx.yml``` base templates (those files are not modified) to add your code related resources (check the source code [injection.cs](./src/injection.cs)). For example, if you run the command on the provided project template,
+
+```shell
+dotnet cf4dotnet api E:\Git\public\dotnet-cf4dotnet\test\artifact\MyApi.dll -b 1 -e test
+```
+you will get the next [sam-base.yml](./test/sam-base.yml) and [sam-test.yml](./test/sam-test.yml) cloudformation templates.
+
+
+ 
 # Note
 
-This is an initial 0.0.x version of the tool that mainly fits for my personal deployment needs!
+This is an initial 0.0.x version of the tool that fits for my personal deployment needs! I will add new features as soon as I need them. Please feel free to push/ask for improvements, issues or whatever. 
 
-Feel free to push/ask for improvements, issues or whatever.
+How I use it? 
 
+* I work on my API Gateway functions code,
+* and push code to GitHub, trigering [travis](https://travis-ci.com) pipeline that mainly:
+    * builds and tests the code,
+    * sends the code artifact to S3,
+    * runs cf4dotnet to create the required CF templates (using  $TRAVIS_BUILD_NUMBER as the build-version I use to version my Lambdas), and fnially,
+    * deploy the CF templates to my AWS account.
 
+Hope you get ideas on how to build your own pipes ;)

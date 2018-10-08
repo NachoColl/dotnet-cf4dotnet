@@ -18,12 +18,12 @@
     <PackageReference Include="Amazon.Lambda.Core" Version="1.0.0" />
     <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="NachoColl.Cloudformation4dotNET" Version="0.0.21" />
+    <PackageReference Include="NachoColl.Cloudformation4dotNET" Version="0.0.*" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Amazon.Lambda.Tools" Version="2.1.1" />
-    <DotNetCliToolReference Include="NachoColl.Cloudformation4dotNET" Version="0.0.20" />
+    <DotNetCliToolReference Include="NachoColl.Cloudformation4dotNET" Version="0.0.*" />
   </ItemGroup>
 
 </Project>

@@ -371,8 +371,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::Serverless::Function"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: myapi-{0}", function.MethodName)));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: nwayapi::MyAPI.Lambdas.Handlers::{0} ", function.MethodName)));
-                
+                cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: nwayapi::MyAPI.Lambdas.Handlers::{0} ", function.MethodName)));               
                 cloudformationResources.AppendLine(IndentText(3, "Role: !Ref myAPILambdaExecutionRole"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
                 cloudformationResources.AppendLine();
