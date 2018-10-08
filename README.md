@@ -71,7 +71,7 @@ By using dotnet-cf4dotnet I only have to work on code, and let [travis](https://
 
 * builds and tests the code,
 * sends the code artifact to S3,
-* runs cf4dotnet to create the required CF templates (using  $TRAVIS_BUILD_NUMBER as the build-version I use to version my Lambdas), and fnially,
+* runs cf4dotnet to create the required CF templates (using  $TRAVIS_BUILD_NUMBER as the build-version I use to version my Lambdas), and finally,
 * deploy the CF templates to my AWS account.
 
 Hope you get ideas on how to build your own pipes ;)
