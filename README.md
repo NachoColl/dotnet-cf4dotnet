@@ -63,7 +63,7 @@ you will get the next [sam-base.yml](./test/sam-base.yml) and [sam-test.yml](./t
  
 # Note
 
-This is an initial 0.0.x version of that fits for my deployment needs! I will check for issues and add new features as soon as I need them. Please feel free to push/ask for improvements, questions or whatever. 
+This is an initial 0.0.x version that fits my deployment needs! I will check for issues and add new features as soon as I need them. Please feel free to push/ask for improvements, questions or whatever. 
 
 How I use it? 
 
