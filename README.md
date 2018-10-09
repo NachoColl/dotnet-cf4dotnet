@@ -75,7 +75,7 @@ To create the Cloudformation templates that you'll need to deploy your code, run
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name> -c 2-accounts
 ```
 
-This command will use ```sam.yml``` and ```samx.yml``` base templates (those files are not modified) to add your code related resources (check the source code [injection.cs](./src/injection.cs)). For example, if you run the command on the provided project template,
+This command will use ```sam.yml``` and ```samx.yml``` base templates (those files are not modified) to add your code related resources (check the source code [Injection.cs](./src/Injection.cs)). For example, if you run the command on the provided project template,
 
 ```bash
 dotnet cf4dotnet api E:\Git\public\dotnet-cf4dotnet\test\artifact\MyApi.dll -b 1 -e prod
