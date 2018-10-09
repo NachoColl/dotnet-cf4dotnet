@@ -1,26 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.ComponentModel;
 
 using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
 
 using Newtonsoft.Json;
 
-using System.Reflection;
-
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 namespace MyAPI
 {
-    public class API
+    public class APIGateway
     {
 
-        /* A function to check if our API is up and running. */
-        [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties(PathPart:"utils/status")]
+        /* A function that will get APIGateway + Lambda resources created. */
+        [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=2)]
         public APIGatewayProxyResponse CheckStatus(APIGatewayProxyRequest Request, ILambdaContext context) => new APIGatewayProxyResponse
         {
             StatusCode = 200,

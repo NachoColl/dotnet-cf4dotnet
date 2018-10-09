@@ -1,0 +1,195 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: My API Base Resources.
+
+Parameters:
+
+  APIRootName:
+    Type: String
+    Default: test
+
+  S3Bucket:
+    Type: String
+
+  PackageBaseFileName:
+    Type: String
+    Description: The package file name (e.g. 'mySourceCode')
+  
+  PackageVersion:
+    Type: String 
+    Description: The package file version (e.g. '78')
+
+Globals:
+  Function:
+    Runtime: dotnetcore2.0
+    CodeUri: 
+      Bucket: !Ref S3Bucket
+      Key: !Sub "api/${PackageBaseFileName}-${PackageVersion}.zip"     
+    Timeout: 60
+    Tags: 
+      appcode: !Ref APIRootName
+          
+Resources:
+
+  #################################################################################
+  # API Gateway definition                                                        #
+  #################################################################################
+
+  
+  myAPI: 
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Description: "My API"
+      Name: !Ref APIRootName
+      EndpointConfiguration:
+        Types:
+        - REGIONAL
+
+  #################################################################################
+  # Lambda Execution Role                                                         #
+  #################################################################################
+
+  myAPILambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+  
+            
+  # do not delete this mark
+  # deploy will use it to inject cloudformation resources.
+
+  #  INJECTED CODE:
+
+
+  ############################################
+  # API Gateway root paths
+  ############################################
+
+  utilsAPIResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref myAPI
+      ParentId: !GetAtt myAPI.RootResourceId
+      PathPart: utils
+
+
+  ############################################
+  # API Gateway methods
+  ############################################
+
+  # CheckStatus
+  CheckStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: myapi-CheckStatus
+      Handler: MyApi::MyAPI.APIGateway::CheckStatus 
+      Role: !Ref myAPILambdaExecutionRole
+      Timeout: 20
+
+  statusAPIResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref myAPI
+      ParentId: !Ref utilsAPIResource
+      PathPart: status
+
+  CheckStatusAPIMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref myAPI
+      ResourceId: !Ref statusAPIResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckStatusFunction.Arn}:${!stageVariables.lambdaAlias}/invocations"
+        Credentials: !Ref myAPILambdaExecutionRole
+
+
+  ############################################
+  # API GAteway stages
+  ############################################
+
+  Staging:
+    Type: AWS::ApiGateway::Stage
+    DependsOn: myAPI
+    Properties:
+      StageName: staging
+      Description: API Staging
+      RestApiId: !Ref myAPI
+      DeploymentId: !Ref StagingDeployment
+      Variables:
+        lambdaAlias: staging
+
+  StagingDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref myAPI
+    DependsOn:
+      - CheckStatusAPIMethod
+
+  Prod:
+    Type: AWS::ApiGateway::Stage
+    DependsOn: myAPI
+    Properties:
+      StageName: prod
+      Description: API Production
+      RestApiId: !Ref myAPI
+      DeploymentId: !Ref ProdDeployment
+      Variables:
+        lambdaAlias: prod
+
+  ProdDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref myAPI
+    DependsOn:
+      - CheckStatusAPIMethod
+
+
+  ############################################
+  # Standalone Lambdas
+  ############################################
+
+  EchoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: myapi-Echo
+      Handler: MyApi::MyAPI.Lambdas::Echo 
+      Role: !Ref myAPILambdaExecutionRole
+      Timeout: 20
+
+  # END of injected code
+
+Outputs:
+
+  myAPIId:
+    Description: API Gateway ID
+    Value: !Ref myAPI
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiGatewayId"
+
+  myAPIRootResourceId:
+    Description: API Gateway ID
+    Value: !GetAtt myAPI.RootResourceId
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiGatewayRootResourceId"

@@ -17,7 +17,6 @@ dist/
 *.log
 
 # Build results
-sam-*.yml
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
