@@ -1,12 +1,10 @@
-# Description
+[![Build Status](https://travis-ci.com/NachoColl/dotnet-cf4dotnet.svg?branch=master)](https://travis-ci.com/NachoColl/dotnet-cf4dotnet)
 
-Use **Cloudformation4dotNET** (cf4dotNet) to automatically create the required AWS Cloudformation templates to deploy your dotNET code on AWS. 
+Use **Cloudformation4dotNET** (cf4dotNet) to dynamically create your dotNET code related AWS Cloudformation templates. 
 
 The idea is to use the command on your deployment pipelines, so you only have to work on the code side, without worrying about the related CF templates updates and AWS resources versioning.
 
-[![Build Status](https://travis-ci.com/NachoColl/dotnet-cf4dotnet.svg?branch=master)](https://travis-ci.com/NachoColl/dotnet-cf4dotnet)
-
-# How to use it
+# How to use
 
 To start, **install the Cloudformation4dotNET templates**,
 
@@ -71,7 +69,7 @@ dotnet publish -o ./artifact --framework netcoreapp2.0 -c Release
 
 ### Running cf4dotNET tool
 
-To create the Cloudformation templates you'll need to deploy your code, run ```dotnet-cf4dotnet``` as follows:
+To create the Cloudformation templates that you'll need to deploy your code, run ```dotnet-cf4dotnet``` as follows:
 
 ```shell
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name> -c 2-accounts
@@ -82,7 +80,7 @@ This command will use ```sam.yml``` and ```samx.yml``` base templates (those fil
 ```shell
 dotnet cf4dotnet api E:\Git\public\dotnet-cf4dotnet\test\artifact\MyApi.dll -b 1 -e prod
 ```
-you will get the next [sam-base.yml](./test/sam-base.yml) and [sam-test.yml](./test/sam-prod.yml) cloudformation templates.
+you will get the next [sam-base.yml](./test/sam-base.yml) and [sam-prod.yml](./test/sam-prod.yml) cloudformation templates.
 
 #### cf4dotNET options
 
