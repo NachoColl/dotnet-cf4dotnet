@@ -141,10 +141,10 @@ namespace Cloudformation4dotNET
                             .Select(me => me.Name)
                             .Contains(m.Name))){
 
-                    APIGateway.APIGatewayResourceProperties apiGatewayPath = 
+                    APIGateway.APIGatewayResourceProperties apiGatewayProperties = 
                         (APIGateway.APIGatewayResourceProperties) methodInfo.GetCustomAttribute(typeof (APIGateway.APIGatewayResourceProperties));
-                    if (apiGatewayPath!=null)
-                        functionsList.Add(new ResourceProperties(apiGatewayPath?.PathPart ?? methodInfo.Name){ MethodClassPath = methodInfo.DeclaringType.FullName,  MethodName = methodInfo.Name, EnableCORS = apiGatewayPath.EnableCORS});
+                    if (apiGatewayProperties!=null)
+                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name){ MethodClassPath = methodInfo.DeclaringType.FullName,  MethodName = methodInfo.Name, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds});
                 }
             }
             return functionsList;

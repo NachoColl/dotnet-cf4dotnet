@@ -102,7 +102,7 @@ Resources:
       FunctionName: myapi-CheckStatus
       Handler: MyApi::MyAPI.APIGateway::CheckStatus 
       Role: !Ref myAPILambdaExecutionRole
-      Timeout: 20
+      Timeout: 2
 
   statusAPIResource:
     Type: AWS::ApiGateway::Resource
@@ -123,6 +123,37 @@ Resources:
         IntegrationHttpMethod: POST
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckStatusFunction.Arn}:${!stageVariables.lambdaAlias}/invocations"
         Credentials: !Ref myAPILambdaExecutionRole
+
+  # enabling OPTIONS for CheckStatus
+
+  CheckStatusAPIMethodOPTIONS:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref myAPI
+      ResourceId: !Ref statusAPIResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          -  ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+             ResponseTemplates:
+              application/json: ''
+             StatusCode: '200'
+        PassthroughBehavior: NEVER
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+      MethodResponses:
+        -  ResponseModels:
+            application/json: Empty
+           ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+           StatusCode: '200'
 
 
   ############################################

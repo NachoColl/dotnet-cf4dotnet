@@ -4,7 +4,7 @@ Use **Cloudformation4dotNET** (cf4dotNet) to dynamically create your dotNET code
 
 The idea is to use the command on your deployment pipelines, so you only have to work on the code side, without worrying about the related CF templates updates and AWS resources versioning.
 
-# How to use
+# How-To
 
 To start, **install the Cloudformation4dotNET templates**,
 
@@ -12,15 +12,15 @@ To start, **install the Cloudformation4dotNET templates**,
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates.DotNetNew
 ```
 
-and create a new project example:
+and create a new ```cf4dotnet```project:
 
 ```
 dotnet new cf4dotnet
 ```
 
-This will create a project including the next files:
+This command will create a new C# project including the next files:
 
-- ```MyApi.cs```, a simple API Gateway related functions class example,
+- ```MyApi.cs```, a simple API Gateway related functions class,
 
 ```csharp
 namespace MyAPI
@@ -41,7 +41,7 @@ namespace MyAPI
 }
 ```
 
-- ```MyLambdas.cs```, to code Lambdas with no API Gateway related endpoint,
+- ```MyLambdas.cs```, to code standalone Lambdas,
 
 ```csharp
 namespace MyAPI {
