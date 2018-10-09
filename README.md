@@ -63,7 +63,7 @@ namespace MyAPI {
 
 Build your project as you will do for publishing your code on AWS, for example:
 
-```sh
+```bash
 dotnet publish -o ./artifact --framework netcoreapp2.0 -c Release
 ```
 
@@ -71,20 +71,20 @@ dotnet publish -o ./artifact --framework netcoreapp2.0 -c Release
 
 To create the Cloudformation templates that you'll need to deploy your code, run ```dotnet-cf4dotnet``` as follows:
 
-```sh
+```bash
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name> -c 2-accounts
 ```
 
 This command will use ```sam.yml``` and ```samx.yml``` base templates (those files are not modified) to add your code related resources (check the source code [injection.cs](./src/injection.cs)). For example, if you run the command on the provided project template,
 
-```sh
+```bash
 dotnet cf4dotnet api E:\Git\public\dotnet-cf4dotnet\test\artifact\MyApi.dll -b 1 -e prod
 ```
 you will get the next [sam-base.yml](./test/sam-base.yml) and [sam-prod.yml](./test/sam-prod.yml) cloudformation templates.
 
 #### cf4dotNET options
 
-```sh
+```bash
 Usage: cf4dotNet api [arguments] [options]
 
 Arguments:
@@ -108,7 +108,7 @@ How I use it?
 
 I only work on API/Lambdas code, push changes and let [travis](https://travis-ci.com) pipeline deploy the cloudformation updates to my AWS account. 
 
-```sh
+```bash
 sudo: required
 language: csharp
 mono: none
