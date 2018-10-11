@@ -4,10 +4,10 @@
     "tags": {
         "language": "C#"   
     },
-    "classifications": [ "AWS" ],
+    "classifications": [ "AWS", "Cloudformation", "C#" ],
     "identity": "NachoColl.Cloudformation4dotNET.CSharp",
-    "name": "Sample AWS API Gateway project to use with Cloudformation4dotNET",
+    "name": "AWS API Gateway and Lambda demo project to use with Cloudformation4dotNET (c4dotnet)",
     "shortName": "cf4dotnet",
-    "preferNameDirectory" : true,
+    "preferNameDirectory" : false,
     "sourceName": "MyAPI"
 }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
@@ -13,16 +13,19 @@
     <DefineConstants>RELEASE;</DefineConstants>
   </PropertyGroup>
 
+  <!-- please note that we set version="*" so you check the last versions available -->
+  <!-- check and configure to your own needs -->
   <ItemGroup>
-    <PackageReference Include="Amazon.Lambda.APIGatewayEvents" Version="1.1.2" />
-    <PackageReference Include="Amazon.Lambda.Core" Version="1.0.0" />
-    <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="1.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Amazon.Lambda.APIGatewayEvents" Version="*" />
+    <PackageReference Include="Amazon.Lambda.Core" Version="*" />
+    <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="*" />
+    <PackageReference Include="Newtonsoft.Json" Version="*" />
     <PackageReference Include="NachoColl.Cloudformation4dotNET" Version="0.0.*" />
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="Amazon.Lambda.Tools" Version="2.1.1" />
+    <!-- to install lambda tools (3.x.x) use 'dotnet tool install -g Amazon.Lambda.Tools' -->
+    <!-- <DotNetCliToolReference Include="Amazon.Lambda.Tools" Version="*" /> -->
     <DotNetCliToolReference Include="NachoColl.Cloudformation4dotNET" Version="0.0.*" />
   </ItemGroup>
 
