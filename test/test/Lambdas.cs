@@ -12,7 +12,7 @@ using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.TestUtilities;
 
-using MyAPI;
+using MyApiTest;
 
 namespace MyTests {
     

@@ -6,14 +6,13 @@ using Amazon.Lambda.APIGatewayEvents;
 
 using Newtonsoft.Json;
 
-namespace MyAPI {
+namespace MyApiTest {
 
     public class Lambdas
     {
         
         /* A function that will get Lambda resources created (only) */
-        [Cloudformation4dotNET.Lambda.LambdaResourceProperties(TimeoutInSeconds=20)]
-        public void Echo(string Input, ILambdaContext Context) => Input.ToUpper();
-        
+        [Cloudformation4dotNET.Lambda.LambdaResourceProperties(TimeoutInSeconds=2)]
+        public void Echo(string Input, ILambdaContext Context) => Context?.Logger?.Log(Input.ToUpper());
     }
 }

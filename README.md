@@ -6,10 +6,10 @@ The idea is to use the command on your deployment pipelines, so you only have to
 
 # How-To
 
-To start, **install the Cloudformation4dotNET templates**,
+To start, install the [cf4dotnet related templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
 
 ```
-dotnet new -i NachoColl.Cloudformation4dotNET.Templates.DotNetNew
+dotnet new -i NachoColl.Cloudformation4dotNET.Templates
 ```
 
 and create a new ```cf4dotnet```project:
@@ -18,7 +18,7 @@ and create a new ```cf4dotnet```project:
 dotnet new cf4dotnet
 ```
 
-This command will create a new C# project including the next files:
+A new project will get generated including the next files:
 
 - ```MyApi.cs```, a simple API Gateway related functions class,
 
@@ -50,8 +50,8 @@ namespace MyAPI {
     {
         
         /* A function that will get Lambda resources created (only) */
-        [Cloudformation4dotNET.Lambda.LambdaResourceProperties(TimeoutInSeconds=20)]
-        public void Echo(string Input, ILambdaContext Context) => Input.ToUpper();
+        [Cloudformation4dotNET.Lambda.LambdaResourceProperties(TimeoutInSeconds=2)]
+        public void Echo(string Input, ILambdaContext Context) => Context?.Logger?.Log(Input.ToUpper());
         
     }
 }
@@ -61,26 +61,28 @@ namespace MyAPI {
 
 - and two cloudformation templates, ```sam.yml``` and ```samx.yml```, that are used as your project base cloudformation templates.
 
-Build your project as you will do for publishing your code on AWS, for example:
+Test the project to check everything is ok and build it as you will do for pushing your code to AWS, for example:
 
 ```bash
-dotnet publish -o ./artifact --framework netcoreapp2.0 -c Release
+dotnet publish -o ./artifact --framework netcoreapp2.1 -c Release
 ```
 
 ### Running cf4dotNET tool
 
-To create the Cloudformation templates that you'll need to deploy your code, run ```dotnet-cf4dotnet``` as follows:
+To create the Cloudformation templates that you need to deploy your code, run ```dotnet-cf4dotnet``` as follows:
 
 ```bash
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name> -c 2-accounts
 ```
 
-This command will use ```sam.yml``` and ```samx.yml``` base templates (those files are not modified) to add your code related resources (check the source code [Injection.cs](./src/Injection.cs)). For example, if you run the command on the provided project template,
+This command will use ```sam.yml``` and ```samx.yml``` base templates (those files are not modified) to add your code related resources (check the source code [here](./src/Injection.cs) - sorry, I also need to write spaghetti code time to time -). 
+
+To get and example, if you run the command on the provided project template,
 
 ```bash
 dotnet cf4dotnet api E:\Git\public\dotnet-cf4dotnet\test\artifact\MyApi.dll -b 1 -e prod
 ```
-you will get the next [sam-base.yml](./test/sam-base.yml) and [sam-prod.yml](./test/sam-prod.yml) cloudformation templates.
+the next [sam-base.yml](./test/sam-base.yml) and [sam-prod.yml](./test/sam-prod.yml) cloudformation templates will get created and ready to use for deployment.
 
 #### cf4dotNET options
 

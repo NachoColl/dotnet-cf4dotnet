@@ -6,7 +6,7 @@ Parameters:
 
   APIRootName:
     Type: String
-    Default: test
+    Default: MyApiTest
 
   S3Bucket:
     Type: String
@@ -20,8 +20,9 @@ Parameters:
     Description: The package file version (e.g. '78')
 
 Globals:
+
   Function:
-    Runtime: dotnetcore2.0
+    Runtime: dotnetcore2.1
     CodeUri: 
       Bucket: !Ref S3Bucket
       Key: !Sub "api/${PackageBaseFileName}-${PackageVersion}.zip"     
