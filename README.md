@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/NachoColl/dotnet-cf4dotnet.svg?branch=master)](https://travis-ci.com/NachoColl/dotnet-cf4dotnet)
 
-Use **Cloudformation4dotNET** (cf4dotNet) to dynamically create the AWS Cloudformation templates your code needs to get deployed on AWS. 
+Use **Cloudformation4dotNET** (cf4dotNet) to dynamically create the AWS Cloudformation templates you need to deploy your code on AWS. 
 
 The idea is to use the command on your deployment pipelines, so you only have to work on the code side, without worrying about the related Cloudformation updates and AWS resources versioning.
 
