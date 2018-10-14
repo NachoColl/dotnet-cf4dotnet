@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+
     <Authors>Nacho Coll</Authors>
     <Description>Create AWS Cloudformation templates from dotNET code.</Description>
 
@@ -14,8 +15,9 @@
 
     <AssemblyName>dotnet-cf4dotnet</AssemblyName>
     <ToolCommandName>dotnet-cf4dotnet</ToolCommandName>
-  </PropertyGroup>
 
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
