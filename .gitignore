@@ -17,6 +17,7 @@ dist/
 *.log
 
 # Build results
+artifact/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

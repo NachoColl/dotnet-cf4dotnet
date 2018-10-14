@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: My API Resources.
+        
+Resources:
+
+  # do not delete this mark
+  # deploy will use it to inject cloudformation resources.
+
+  #  INJECTED CODE:
+
+
+  ############################################
+  # Lambdas versions
+  ############################################
+
+  # CheckStatusVersion2 lambda resources (version + alias)
+
+  CheckStatusVersion2:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: myapi-CheckStatus
+
+  CheckStatusAlias:
+    Type: AWS::Lambda::Alias
+    DeletionPolicy: Retain
+    DependsOn: CheckStatusVersion2
+    Properties:
+      FunctionName: myapi-CheckStatus
+      FunctionVersion: !GetAtt CheckStatusVersion2.Version
+      Name: prod
+
+  # EchoVersion2 lambda resources (version + alias)
+
+  EchoVersion2:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: myapi-Echo
+
+  EchoAlias:
+    Type: AWS::Lambda::Alias
+    DeletionPolicy: Retain
+    DependsOn: EchoVersion2
+    Properties:
+      FunctionName: myapi-Echo
+      FunctionVersion: !GetAtt EchoVersion2.Version
+      Name: prod
+
+  # END of injected code

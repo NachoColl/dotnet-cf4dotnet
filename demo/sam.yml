@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: My API Base Resources.
+
+Parameters:
+
+  APIRootName:
+    Type: String
+    Default: demo
+
+  S3Bucket:
+    Type: String
+
+  PackageBaseFileName:
+    Type: String
+    Description: The package file name (e.g. 'mySourceCode')
+  
+  PackageVersion:
+    Type: String 
+    Description: The package file version (e.g. '78')
+
+Globals:
+
+  Function:
+    Runtime: dotnetcore2.1
+    CodeUri: 
+      Bucket: !Ref S3Bucket
+      Key: !Sub "api/${PackageBaseFileName}-${PackageVersion}.zip"     
+    Timeout: 60
+    Tags: 
+      appcode: !Ref APIRootName
+          
+Resources:
+
+  #################################################################################
+  # API Gateway definition                                                        #
+  #################################################################################
+
+  
+  myAPI: 
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Description: "My API"
+      Name: !Ref APIRootName
+      EndpointConfiguration:
+        Types:
+        - REGIONAL
+
+  #################################################################################
+  # Lambda Execution Role                                                         #
+  #################################################################################
+
+  myAPILambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+  
+            
+  # do not delete this mark
+  # deploy will use it to inject cloudformation resources.
+
+  # @INJECT
+
+Outputs:
+
+  myAPIId:
+    Description: API Gateway ID
+    Value: !Ref myAPI
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiGatewayId"
+
+  myAPIRootResourceId:
+    Description: API Gateway ID
+    Value: !GetAtt myAPI.RootResourceId
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiGatewayRootResourceId"
