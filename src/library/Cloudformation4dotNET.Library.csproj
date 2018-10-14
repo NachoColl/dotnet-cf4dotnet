@@ -10,7 +10,6 @@
     <PackageTags>dotnet;cf4dotnet;library</PackageTags>
   
     <TargetFramework>netstandard1.6</TargetFramework>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

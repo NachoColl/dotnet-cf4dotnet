@@ -11,10 +11,10 @@ script:
   # NOTES: both packages (the library and the global tool) are strongly version coupled (don't want to create a new repo for such tiny code :)
   # the library (so you can import an use it on cf4dotnet projects)
   - sed -i -e "s/000/${TRAVIS_BUILD_NUMBER^^}/g" $TRAVIS_BUILD_DIR/src/library/Cloudformation4dotNET.Library.csproj
-  - dotnet build $TRAVIS_BUILD_DIR/src/library -c release -o $TRAVIS_BUILD_DIR/artifacts/library
+  - dotnet pack $TRAVIS_BUILD_DIR/src/library -c release -o $TRAVIS_BUILD_DIR/artifacts/library
   # the cf4dotnet global tool 
-  - sed -i -e "s/000/${TRAVIS_BUILD_NUMBER^^}/g" $TRAVIS_BUILD_DIR/src/Cloudformation4dotNET.csproj  
-  - dotnet build $TRAVIS_BUILD_DIR/src -c release -o $TRAVIS_BUILD_DIR/artifacts/tool
+  - sed -i -e "s/000/${TRAVIS_BUILD_NUMBER^^}/g" $TRAVIS_BUILD_DIR/src/tool/Cloudformation4dotNET.csproj  
+  - dotnet build $TRAVIS_BUILD_DIR/src/tool -c release -o $TRAVIS_BUILD_DIR/artifacts/tool
 deploy:
   - provider: script
     skip_cleanup: true
