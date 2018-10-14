@@ -15,8 +15,6 @@
 
     <AssemblyName>dotnet-cf4dotnet</AssemblyName>
     <ToolCommandName>dotnet-cf4dotnet</ToolCommandName>
-
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
