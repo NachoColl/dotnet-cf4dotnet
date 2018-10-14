@@ -3,7 +3,7 @@ using System;
 namespace Cloudformation4dotNET.APIGateway
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class APIGatewayResourceProperties : Lambda.LambdaResourceProperties
+    public class APIGatewayResourceProperties : Cloudformation4dotNET.Lambda.LambdaResourceProperties
     {
 
         public string PathPart { get ; set; } = ""; 

@@ -1,26 +1,28 @@
 [![Build Status](https://travis-ci.com/NachoColl/dotnet-cf4dotnet.svg?branch=master)](https://travis-ci.com/NachoColl/dotnet-cf4dotnet)
 
-Use **Cloudformation4dotNET** (cf4dotNet) to dynamically create your dotNET code related AWS Cloudformation templates. 
+Use **Cloudformation4dotNET** (cf4dotNet) to dynamically create the AWS Cloudformation templates your code needs to get deployed on AWS. 
 
-The idea is to use the command on your deployment pipelines, so you only have to work on the code side, without worrying about the related CF templates updates and AWS resources versioning.
+The idea is to use the command on your deployment pipelines, so you only have to work on the code side, without worrying about the related Cloudformation updates and AWS resources versioning.
+
+You can check for some notes on a real example using this tool at [linkedin.com](https://www.linkedin.com/pulse/building-cicd-pipeline-aws-lambdas-net-core-nacho-coll/).
 
 # How-To
 
-To start, install the [cf4dotnet related templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
+Install the [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates), so you don't have to start from scratch:
 
 ```
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates
 ```
 
-and create a new ```cf4dotnet```project:
+Create a new ```cf4dotnet``` project,
 
 ```
 dotnet new cf4dotnet
 ```
 
-A new project will get generated including the next files:
+and a new project will get generated including the next files:
 
-- ```MyApi.cs```, a simple API Gateway related functions class,
+- ```MyApi.cs```, a simple [AWS API Gateway](https://aws.amazon.com/api-gateway/) functions class,
 
 ```csharp
 namespace MyAPI
@@ -41,7 +43,7 @@ namespace MyAPI
 }
 ```
 
-- ```MyLambdas.cs```, to code standalone Lambdas,
+- ```MyLambdas.cs```, to code standalone [Lambdas](https://aws.amazon.com/lambda/),
 
 ```csharp
 namespace MyAPI {
@@ -57,7 +59,7 @@ namespace MyAPI {
 }
 ```
 
-- the related ```MyApi.csproj``` project file, 
+- the related ```MyProject.csproj``` project file, 
 
 - and two cloudformation templates, ```sam.yml``` and ```samx.yml```, that are used as your project base cloudformation templates.
 
@@ -69,7 +71,12 @@ dotnet publish -o ./artifact --framework netcoreapp2.1 -c Release
 
 ### Running cf4dotNET tool
 
-To create the Cloudformation templates that you need to deploy your code, run ```dotnet-cf4dotnet``` as follows:
+To create the Cloudformation templates that you need to deploy your code on AWS, install the tool,
+
+```bash
+dotnet tool install --global NachoColl.Cloudformation4dotNET --version 0.0.28
+```
+and run  ```dotnet-cf4dotnet``` indicating the next parameters:
 
 ```bash
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name> -c 2-accounts

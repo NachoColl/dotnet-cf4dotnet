@@ -7,7 +7,7 @@
 
     <PackageId>NachoColl.Cloudformation4dotNET</PackageId> 
     <PackageVersion>0.0.000</PackageVersion>
-    <PackageTags>dotnet;watch</PackageTags>
+    <PackageTags>dotnet;cf4dotnet</PackageTags>
     <PackAsTool>true</PackAsTool>
 
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -24,4 +24,8 @@
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
   </ItemGroup>
   
+  <ItemGroup>
+    <ProjectReference Include=".\library\Cloudformation4dotNET.Library.csproj" />
+  </ItemGroup>
+
 </Project>
