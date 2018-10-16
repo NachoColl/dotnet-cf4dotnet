@@ -75,20 +75,22 @@ dotnet tool install --global NachoColl.Cloudformation4dotNET --version 0.0.33
 
 ### Getting your code AWS Cloudformation templates
 
-To get your code templates you mainly need to run  ```dotnet-cf4dotnet``` indicating your code file, the environment name you want to deploy the code and the code versino number your deploying :
+To get your code deployment templates run  ```dotnet-cf4dotnet``` indicating your *code file*, the *environment name* and the *version number* (version number is used to create new AWS Lambda versions):
 
 ```bash
-dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name> -c 2-accounts
+dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name>
 ```
 
-This command will check your <your-code-dll-file> and use the base cloudformation files (```sam.yml``` and ```samx.yml```) to build the templates your need. For example, if you run the command on the provided project demo template files (```dotnet new cf4dotnet```),
+By running this command on your deployment pipeline all your code functions AWS resources will get defined injected on your base (```sam.yml``` and ```samx.yml```) templates. 
+
+#### cf4dotnet results example
+
+If you run the command on the provided project demo template files (```dotnet new cf4dotnet```),
 
 ```bash
 dotnet cf4dotnet api E:\Git\public\Cloudformation4dotNET\dotnet-cf4dotnet\demo\artifact\MyDemoAssemblyName.dll
 ```
-you get the next [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) cloudformation templates.
-
-You can now use those files to deploy your code on your pipeline:
+you get the next [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) cloudformation templates ready to get deployed on AWS:
 
 ```bash
 # deploy base template
