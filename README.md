@@ -12,7 +12,7 @@ The idea is to use it on your deployment pipelines so you only have to work on t
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates
 dotnet new cf4dotnet -n MyDemoProject -as MyDemoAssemblyName -t MyAWSTagCode
 
-# build your code
+# build your code and check everything is ok
 dotnet publish ./src -o ../artifact --framework netcoreapp2.1 -c Release
 
 # install cf4dotnet tool
