@@ -2,7 +2,7 @@
 
 Use **Cloudformation4dotNET** (cf4dotNet) to create the [AWS Cloudformation](https://aws.amazon.com/cloudformation/) templates you need to deploy your code on AWS. 
 
-The idea is to run ```cf4dotnet``` command on your deployment pipelines, so you only have to work on the code side, without worrying about the related Cloudformation updates and AWS resources versioning.
+The idea is to only have to work on the code side and let ```cf4dotnet``` build the required Cloudformation updates and AWS resources on your deployment pipeline.
 
 ## TL;DR
 
