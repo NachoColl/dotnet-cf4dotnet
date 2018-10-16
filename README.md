@@ -59,55 +59,48 @@ namespace MyAPI {
 
 - and two cloudformation templates, ```sam.yml``` and ```samx.yml```, that are used as your project base cloudformation templates.
 
-Test the project to check everything is ok and build it as you will do for pushing your code to AWS, for example:
+Test the project to check everything is ok and build it as you will do for pushing your code to AWS:
 
 ```bash
 dotnet publish ./src -o ../artifact --framework netcoreapp2.1 -c Release
 ```
 
-### Running cf4dotNET tool
+Your code is ready to deploy, and you can use cf4dotnet to get the AWS Cloudformation templates you need.
 
-Once your code is ready to deploy, you can use cf4dotnet to create the related AWS Cloudformation templates. To go, install the tool,
+### Installing cf4dotNET global tool
+
+To install the cf4dotNET just run the next command:
 
 ```bash
 dotnet tool install --global NachoColl.Cloudformation4dotNET --version 0.0.33
 ```
-and run  ```dotnet-cf4dotnet``` indicating the next parameters:
+
+### Getting your code AWS Cloudformation templates
+
+To get your code templates you mainly need to run  ```dotnet-cf4dotnet``` indicating your code file, the environment name you want to deploy the code and the code versino number your deploying :
 
 ```bash
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name> -c 2-accounts
 ```
 
-This command will check your <your-code-dll-file> and use the base cloudformation files (```sam.yml``` and ```samx.yml```) to create the templates your need. To get and example, if you run the command on the provided project demo files (```dotnet new cf4dotnet```),
+This command will check your <your-code-dll-file> and use the base cloudformation files (```sam.yml``` and ```samx.yml```) to build the templates your need. For example, if you run the command on the provided project demo template files (```dotnet new cf4dotnet```),
 
 ```bash
 dotnet cf4dotnet api E:\Git\public\Cloudformation4dotNET\dotnet-cf4dotnet\demo\artifact\MyProject.dll
 ```
 you get the next [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) cloudformation templates.
 
-Use those generated files to deploy your code, for example:
+You can now use those files to deploy your code on your pipeline:
 
 ```bash
-aws cloudformation deploy --profile deploy --template-file ./demo/sam-base.yml --stack-name mynewproject-stack --parameter-overrides PackageBaseFileName=prod PackageVersion=1 S3Bucket=cf4dotnet-myaccount --tags appcode=mysuperapp --no-fail-on-empty-changeset 
+# deploy base template
+echo "deploying base template ..."
+aws cloudformation deploy --profile deploy --template-file $CF_BASE_TEMPLATE --stack-name $CF_BASE_STACKNAME --parameter-overrides ArtifactS3Bucket=$ARTIFACT_S3_BUCKET  ArtifactS3BucketKey=$ARTIFACT_S3_KEY --tags appcode=$TAG_CODE --no-fail-on-empty-changeset 
+
+# deploy environment template
+echo "deploying $ENVIRONMENT template ..."
+aws cloudformation deploy --profile deploy --template-file $CF_ENVIRONMENT_TEMPLATE --stack-name $CF_ENVIRONMENT_STACKNAME --tags appcode=$TAG_CODE --no-fail-on-empty-changeset 
 ```
-
-#### cf4dotNET options
-
-```bash
-Usage: cf4dotNet api [arguments] [options]
-
-Arguments:
-  source  Your dotnet dll source file full path (e.g. E:/src/my-dotnet-api.dll).
-
-Options:
-  -? | -h | --help                      Show help information
-  -e|--environment <test/staging/prod>  Environment (default: 'prod').
-  -c|--configuration <2-accounts>       Accounts configuration (default: '2-accounts').
-  -b|--build <build-version>            Build version number used to create incremental templates (default: '1').
-  -o|--ouput <output-path>              Cloudformation templates will get created here (default: './').
-```
-
-This initial version is configured to work for 3 environments that will get deployed using 2 accounts: 1 account for ```test```, and 1 account for ```staging``` and ```prod``` - you can check some notes here [https://www.linkedin.com/pulse/building-cicd-pipeline-aws-lambdas-net-core-nacho-coll/](https://www.linkedin.com/pulse/building-cicd-pipeline-aws-lambdas-net-core-nacho-coll/) -.
 
 # Version Notes
 
