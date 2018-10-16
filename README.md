@@ -6,7 +6,7 @@ The idea is to use the command on your deployment pipelines, so you only have to
 
 You can check for some notes on a real example using this tool at [linkedin.com](https://www.linkedin.com/pulse/building-cicd-pipeline-aws-lambdas-net-core-nacho-coll/).
 
-# How-To
+# How To
 
 Install the [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
 
