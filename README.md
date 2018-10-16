@@ -2,11 +2,11 @@
 
 Use **Cloudformation4dotNET** (cf4dotNet) to dynamically create the AWS Cloudformation templates you need to deploy your code on AWS. 
 
-The idea is to use the command on your deployment pipelines, so you only have to work on the code side, without worrying about the related Cloudformation updates and AWS resources versioning.
+The idea is to use it on your deployment pipelines so you only have to work on the code side, without worrying about the related Cloudformation updates and AWS resources versioning.
 
 # How To
 
-Install the [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
+Before running the command tool, install the provided [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
 
 ```
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates
