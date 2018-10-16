@@ -28,7 +28,7 @@ You get [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.y
 
 # How It Works
 
-**Cloudformation4dotNET** uses reflection to check your code for functions that you want to get deployed on AWS, and builds the required Cloudformation templates. To make it work, you only have to mark your AWS function with the provided function property class (e.g. ```Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties```).
+**Cloudformation4dotNET** uses reflection to check your code for functions that you want to deploy on AWS. To make it work, you only have to mark your AWS functions with the provided function-property class (e.g. ```Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties```).
 
 ```csharp
 [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=2)]
@@ -39,7 +39,7 @@ public APIGatewayProxyResponse MyAWSLambdaFunction(...) {
 
 ### Cloudformation4dotNET 'dotnet new' templates
 
-I recommend that you install the available [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
+To check how the tool works, I recommend that you install the available ['dotnet new' templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
 
 ```
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates
@@ -86,31 +86,14 @@ namespace MyAPI {
 
 - and two cloudformation templates, ```sam.yml``` and ```samx.yml```, that are used as your project base cloudformation templates.
 
-Test the project to check everything is ok and build it as you will do for pushing your code to AWS:
 
-```bash
-dotnet publish ./src -o ../artifact --framework netcoreapp2.1 -c Release
-```
+### How to run 
 
-### Installing cf4dotNET global tool
-
-To install the cf4dotNET just run the next command:
-
-```bash
-dotnet tool install --global NachoColl.Cloudformation4dotNET --version 0.0.33
-```
-
-### Getting your code AWS Cloudformation templates
-
-To get your code deployment templates run  ```dotnet-cf4dotnet``` indicating your *code file*, the *environment name* and the *version number* (version number is used to create new AWS Lambda versions):
+To get your code cloudformation templates install and run [dotnet-cf4dotnet](https://www.nuget.org/packages/NachoColl.Cloudformation4dotNET/) indicating your *code file*, the *environment name* and the *version number* (version number is used to create new AWS Lambda versions):
 
 ```bash
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name>
 ```
-
-By running this command on your deployment pipeline all your code functions AWS resources will get defined injected on your base (```sam.yml``` and ```samx.yml```) templates. 
-
-#### cf4dotnet results example
 
 If you run the command on the provided project demo template files (```dotnet new cf4dotnet```),
 
