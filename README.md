@@ -4,8 +4,6 @@ Use **Cloudformation4dotNET** (cf4dotNet) to dynamically create the AWS Cloudfor
 
 The idea is to use the command on your deployment pipelines, so you only have to work on the code side, without worrying about the related Cloudformation updates and AWS resources versioning.
 
-You can check for some notes on a real example using this tool at [linkedin.com](https://www.linkedin.com/pulse/building-cicd-pipeline-aws-lambdas-net-core-nacho-coll/).
-
 # How To
 
 Install the [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
@@ -69,7 +67,7 @@ dotnet publish ./src -o ../artifact --framework netcoreapp2.1 -c Release
 
 ### Running cf4dotNET tool
 
-To create the Cloudformation templates that you need to deploy your code on AWS, install the tool,
+Once your code is ready to deploy, you can use cf4dotnet to create the related AWS Cloudformation templates. To go, install the tool,
 
 ```bash
 dotnet tool install --global NachoColl.Cloudformation4dotNET --version 0.0.33
@@ -80,14 +78,18 @@ and run  ```dotnet-cf4dotnet``` indicating the next parameters:
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name> -c 2-accounts
 ```
 
-This command will use ```sam.yml``` and ```samx.yml``` base templates (those files are not modified) to add your code related resources (check the source code [here](./src/tool/Injection.cs) - sorry, I also need to write spaghetti code time to time -). 
-
-To get and example, if you run the command on the provided project template (cf4dotnet),
+This command will check your <your-code-dll-file> and use the base cloudformation files (```sam.yml``` and ```samx.yml```) to create the templates your need. To get and example, if you run the command on the provided project demo files (```dotnet new cf4dotnet```),
 
 ```bash
 dotnet cf4dotnet api E:\Git\public\Cloudformation4dotNET\dotnet-cf4dotnet\demo\artifact\MyProject.dll
 ```
 you get the next [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) cloudformation templates.
+
+Use those generated files to deploy your code, for example:
+
+```bash
+aws cloudformation deploy --profile deploy --template-file ./demo/sam-base.yml --stack-name mynewproject-stack --parameter-overrides PackageBaseFileName=prod PackageVersion=1 S3Bucket=cf4dotnet-myaccount --tags appcode=mysuperapp --no-fail-on-empty-changeset 
+```
 
 #### cf4dotNET options
 
