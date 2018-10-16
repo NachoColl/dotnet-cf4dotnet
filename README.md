@@ -1,8 +1,6 @@
 [![Build Status](https://travis-ci.com/NachoColl/dotnet-cf4dotnet.svg?branch=master)](https://travis-ci.com/NachoColl/dotnet-cf4dotnet)
 
-Use **Cloudformation4dotNET** (cf4dotNet) to create the [AWS Cloudformation](https://aws.amazon.com/cloudformation/) templates you need to push your code on AWS. 
-
-The idea is to only have to work on the code side and let ```cf4dotnet``` build the Cloudformation templates on your deploy pipeline.
+Use **Cloudformation4dotNET** (cf4dotNet) to create the [AWS Cloudformation](https://aws.amazon.com/cloudformation/) templates you need to push your code on AWS (the idea is to only have to work on the code side and run ```cf4dotnet``` on your deployment pipeline).
 
 ## TL;DR
 
@@ -23,12 +21,14 @@ dotnet cf4dotnet api E:\<your-project-path>\artifact\MyDemoAssemblyName.dll -e p
 
 ```
 
-You get [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) ready to go templates.
+You get [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) to deploy your code on AWS.
 
 
 # How It Works
 
-**Cloudformation4dotNET** uses reflection to check for functions that you want to deploy on AWS and outputs the required resources definition. For example, if you mark a function as follows:
+**Cloudformation4dotNET** uses reflection to check for functions that you want to deploy on AWS and outputs the required resources definition. 
+
+For example, if you mark a function as follows:
 
 ```csharp
 [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=2)]
@@ -36,9 +36,11 @@ public APIGatewayProxyResponse CheckStatusFunction(...) {
   ...
 }
 ```
-you get the related resources definition:
+you get the related resources definition output:
 
 ```bash
+...
+
 CheckStatusFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -47,14 +49,14 @@ CheckStatusFunction:
       Role: !Ref myAPILambdaExecutionRole
       Timeout: 2
 
-  statusAPIResource:
+statusAPIResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId: !Ref myAPI
       ParentId: !Ref utilsAPIResource
       PathPart: status
 
-  CheckStatusAPIMethod:
+CheckStatusAPIMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref myAPI
@@ -69,8 +71,6 @@ CheckStatusFunction:
 
 ...
 ```
-
-### Cloudformation4dotNET 'dotnet new' templates
 
 To check how it works, I recommend that you install the available ['dotnet new' templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
 
