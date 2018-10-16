@@ -28,7 +28,7 @@ You get [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.y
 
 # How It Works
 
-**Cloudformation4dotNET** uses reflection to check your code for functions that should get deployed on AWS, and builds the required Cloudformation template resources. To identify those functions, you only have to mark them with the provided function property class (e.g. ```Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties```).
+**Cloudformation4dotNET** uses reflection to check your code for functions that you want to get deployed on AWS, and builds the required Cloudformation templates. To make it work, you only have to mark your AWS function with the provided function property class (e.g. ```Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties```).
 
 ```csharp
 [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=2)]
@@ -37,7 +37,7 @@ public APIGatewayProxyResponse MyAWSLambdaFunction(...) {
 }
 ```
 
-### Intall 'dotnet new' templates
+### Cloudformation4dotNET 'dotnet new' templates
 
 I recommend that you install the available [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
 
