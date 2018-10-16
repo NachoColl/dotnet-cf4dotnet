@@ -12,10 +12,10 @@ Install the [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templ
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates
 ```
 
-and create a new ```cf4dotnet``` project:
+and create a new ```cf4dotnet``` project (check ```dotnet new cf4dotnet -h``` for the available parameters):
 
 ```
-dotnet new cf4dotnet
+dotnet new cf4dotnet -n MyDemoProject -as MyDemoAssemblyName -t MyAWSTagCode
 ```
 
 A new ```MyProject.csproj``` will get generated including the next files:
@@ -65,8 +65,6 @@ Test the project to check everything is ok and build it as you will do for pushi
 dotnet publish ./src -o ../artifact --framework netcoreapp2.1 -c Release
 ```
 
-Your code is ready to deploy, and you can use cf4dotnet to get the AWS Cloudformation templates you need.
-
 ### Installing cf4dotNET global tool
 
 To install the cf4dotNET just run the next command:
@@ -86,7 +84,7 @@ dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number>
 This command will check your <your-code-dll-file> and use the base cloudformation files (```sam.yml``` and ```samx.yml```) to build the templates your need. For example, if you run the command on the provided project demo template files (```dotnet new cf4dotnet```),
 
 ```bash
-dotnet cf4dotnet api E:\Git\public\Cloudformation4dotNET\dotnet-cf4dotnet\demo\artifact\MyProject.dll
+dotnet cf4dotnet api E:\Git\public\Cloudformation4dotNET\dotnet-cf4dotnet\demo\artifact\MyDemoAssemblyName.dll
 ```
 you get the next [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) cloudformation templates.
 

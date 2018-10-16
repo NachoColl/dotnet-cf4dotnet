@@ -6,7 +6,7 @@ using Amazon.Lambda.APIGatewayEvents;
 
 using Newtonsoft.Json;
 
-namespace demo {
+namespace MyDemoProject {
 
     public class Lambdas
     {

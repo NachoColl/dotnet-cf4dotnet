@@ -1,34 +1,30 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
-Description: My API Base Resources.
+Description: MyDemoProject Base Resources.
 
 Parameters:
 
-  APIRootName:
+  APIName:
     Type: String
-    Default: demo
+    Default: MyDemoProject
 
-  S3Bucket:
+  ArtifactS3Bucket:
     Type: String
 
-  PackageBaseFileName:
+  ArtifactS3BucketKey:
     Type: String
     Description: The package file name (e.g. 'mySourceCode')
-  
-  PackageVersion:
-    Type: String 
-    Description: The package file version (e.g. '78')
 
 Globals:
 
   Function:
     Runtime: dotnetcore2.1
     CodeUri: 
-      Bucket: !Ref S3Bucket
-      Key: !Sub "api/${PackageBaseFileName}-${PackageVersion}.zip"     
+      Bucket: !Ref ArtifactS3Bucket
+      Key: !Ref ArtifactS3BucketKey  
     Timeout: 60
     Tags: 
-      appcode: !Ref APIRootName
+      appcode: "MyAWSTagCode"
           
 Resources:
 
@@ -41,7 +37,7 @@ Resources:
     Type: "AWS::ApiGateway::RestApi"
     Properties:
       Description: "My API"
-      Name: !Ref APIRootName
+      Name: !Ref APIName
       EndpointConfiguration:
         Types:
         - REGIONAL
@@ -101,7 +97,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: myapi-CheckStatus
-      Handler: MyProject::demo.APIGateway::CheckStatus 
+      Handler: MyDemoAssemblyName::MyDemoProject.APIGateway::CheckStatus 
       Role: !Ref myAPILambdaExecutionRole
       Timeout: 2
 
@@ -206,7 +202,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: myapi-Echo
-      Handler: MyProject::demo.Lambdas::Echo 
+      Handler: MyDemoAssemblyName::MyDemoProject.Lambdas::Echo 
       Role: !Ref myAPILambdaExecutionRole
       Timeout: 2
 
