@@ -4,21 +4,48 @@ Use **Cloudformation4dotNET** (cf4dotNet) to dynamically create the AWS Cloudfor
 
 The idea is to use it on your deployment pipelines so you only have to work on the code side, without worrying about the related Cloudformation updates and AWS resources versioning.
 
-# How To
+## TL;DR
 
-Before running the command tool, install the provided [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
+```bash
+
+# create a cf4dotnet demo project (1 API Gateway Lambda and 1 standalone Lambda )
+dotnet new -i NachoColl.Cloudformation4dotNET.Templates
+dotnet new cf4dotnet -n MyDemoProject -as MyDemoAssemblyName -t MyAWSTagCode
+
+# build your code
+dotnet publish ./src -o ../artifact --framework netcoreapp2.1 -c Release
+
+# install cf4dotnet tool
+dotnet tool install --global NachoColl.Cloudformation4dotNET --version 0.0.33
+
+# get the required AWS Cloudformation templates to deploy your code
+dotnet cf4dotnet api E:\Git\public\Cloudformation4dotNET\dotnet-cf4dotnet\demo\artifact\MyDemoAssemblyName.dll -e prod
+
+```
+
+You get [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) ready to go templates.
+
+
+# How It Works
+
+**Cloudformation4dotNET** command tool uses reflection to check your code for functions that should get deployed on AWS and create the required Cloudformation resources. 
+
+To identify those functions you must use the tool-related function property, as for example in case your defining a new API Gateway Lambda:
+
+```csharp
+[Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=2)]
+public APIGatewayProxyResponse MyAWSLambdaFunction(...) { 
+  ...
+}
+```
+
+I recommend that you install the provided [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates) to get a quick demo,
 
 ```
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates
 ```
 
-and create a new ```cf4dotnet``` project (check ```dotnet new cf4dotnet -h``` for the available parameters):
-
-```
-dotnet new cf4dotnet -n MyDemoProject -as MyDemoAssemblyName -t MyAWSTagCode
-```
-
-A new ```MyProject.csproj``` will get generated including the next files:
+and call ```dotnet new cf4dotnet``` to get a demo project that will include the next files:
 
 - ```MyApi.cs```, a simple [AWS API Gateway](https://aws.amazon.com/api-gateway/) functions class,
 
