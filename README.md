@@ -18,8 +18,8 @@ dotnet publish ./src -o ../artifact --framework netcoreapp2.1 -c Release
 # install cf4dotnet tool
 dotnet tool install --global NachoColl.Cloudformation4dotNET --version 0.0.33
 
-# get the required AWS Cloudformation templates to deploy your code
-dotnet cf4dotnet api E:\Git\public\Cloudformation4dotNET\dotnet-cf4dotnet\demo\artifact\MyDemoAssemblyName.dll -e prod
+# get the required AWS Cloudformation templates to deploy your code on AWS
+dotnet cf4dotnet api E:\<your-project-path>\artifact\MyDemoAssemblyName.dll -e prod
 
 ```
 
@@ -28,9 +28,7 @@ You get [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.y
 
 # How It Works
 
-**Cloudformation4dotNET** command tool uses reflection to check your code for functions that should get deployed on AWS and create the required Cloudformation resources. 
-
-To identify those functions you must use the tool-related function property, as for example in case your defining a new API Gateway Lambda:
+**Cloudformation4dotNET** uses reflection to check your code for functions that should get deployed on AWS, and builds the required Cloudformation template resources. To identify those functions, you only have to mark them with the provided function property class (e.g. ```Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties```).
 
 ```csharp
 [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=2)]
@@ -39,13 +37,15 @@ public APIGatewayProxyResponse MyAWSLambdaFunction(...) {
 }
 ```
 
-I recommend that you install the provided [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates) to get a quick demo,
+### Intall 'dotnet new' templates
+
+I recommend that you install the available [tool templates](https://github.com/NachoColl/dotnet-cf4dotnet-templates),
 
 ```
 dotnet new -i NachoColl.Cloudformation4dotNET.Templates
 ```
 
-and call ```dotnet new cf4dotnet``` to get a demo project that will include the next files:
+and call ```dotnet new cf4dotnet``` to get a ready-to-go project that will contain the next files:
 
 - ```MyApi.cs```, a simple [AWS API Gateway](https://aws.amazon.com/api-gateway/) functions class,
 
