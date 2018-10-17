@@ -2,7 +2,7 @@
 
 Use **Cloudformation4dotNET** (cf4dotNet) to create the [AWS Cloudformation](https://aws.amazon.com/cloudformation/) templates you need to push your code on AWS (the idea is to only have to work on the code side and run ```cf4dotnet``` on your deployment pipeline).
 
-## TL;DR
+### TL;DR
 
 ```bash
 
@@ -24,7 +24,7 @@ dotnet cf4dotnet api E:\<your-project-path>\artifact\MyDemoAssemblyName.dll -e p
 You get [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) to deploy your code on AWS.
 
 
-# How It Works
+### How It Works
 
 **Cloudformation4dotNET** uses reflection to check for functions that you want to deploy on AWS and outputs the required resources definition. 
 
@@ -36,7 +36,7 @@ public APIGatewayProxyResponse CheckStatusFunction(...) {
   ...
 }
 ```
-you get the related resources definition output:
+you get the related resources output:
 
 ```bash
 ...
@@ -120,32 +120,23 @@ namespace MyAPI {
 - and two cloudformation templates, ```sam.yml``` and ```samx.yml```, that are used as your project base cloudformation templates.
 
 
-### How to run 
+#### How to run cf4dotnet
 
-To get your code deployment templates install and run [dotnet-cf4dotnet](https://www.nuget.org/packages/NachoColl.Cloudformation4dotNET/) indicating your *code file*, the *environment name* and the *version number* (version number is used to create new AWS Lambda versions):
+Once your code is ready, install and run [dotnet-cf4dotnet](https://www.nuget.org/packages/NachoColl.Cloudformation4dotNET/) indicating your *code file*, the *environment name* and the *version number* (version number is used to create new AWS Lambda versions):
 
 ```bash
 dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name>
 ```
 
-As an example, if you run the command on the demo project template (```dotnet new cf4dotnet```),
+As an example, if you run the command on the provided template project,
 
 ```bash
 dotnet cf4dotnet api E:\Git\public\Cloudformation4dotNET\dotnet-cf4dotnet\demo\artifact\MyDemoAssemblyName.dll
 ```
 you get the next [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) cloudformation templates ready to get deployed on AWS:
 
-```bash
-# deploy base template
-echo "deploying base template ..."
-aws cloudformation deploy --profile deploy --template-file ./sam-base.yml --stack-name $CF_BASE_STACKNAME --parameter-overrides ArtifactS3Bucket=$ARTIFACT_S3_BUCKET  ArtifactS3BucketKey=$ARTIFACT_S3_KEY --tags appcode=$TAG_CODE --no-fail-on-empty-changeset 
 
-# deploy environment template
-echo "deploying $ENVIRONMENT template ..."
-aws cloudformation deploy --profile deploy --template-file ./sam-prod.yml --stack-name $CF_ENVIRONMENT_STACKNAME --tags appcode=$TAG_CODE --no-fail-on-empty-changeset 
-```
-
-# Version Notes
+### Version Notes
 
 This is an initial 0.0.x version that fits my deployment needs! I will check for issues and add new features as soon as I need them. Please feel free to push/ask for improvements, questions or whatever. 
 
