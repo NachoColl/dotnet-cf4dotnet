@@ -41,7 +41,8 @@ namespace Cloudformation4dotNET
                     var accountsConfiguration = config.Option("-c|--configuration <2-accounts>", "Accounts configuration (default: '2-accounts').", CommandOptionType.SingleValue);
                     var buildVersion    = config.Option("-b|--build <build-version>", "Build version number used to create incremental resources (default: '1').", CommandOptionType.SingleValue);
                     var outputPah       = config.Option("-o|--ouput <output-path>", "Cloudformation templates will get created here (default: '.').", CommandOptionType.SingleValue);
-                   
+                    var lambdasPrefix   = config.Option("-p|--prefix <functions-prefix>", "Llambdas prefix code (default: 'myapi-').", CommandOptionType.SingleValue);
+
                     config.OnExecute(()=>{ 
                         if(!string.IsNullOrWhiteSpace(dllSourceFile.Value)){
                             if ((accountsConfiguration.HasValue() && environmentKey.Values[0]!="2-accounts") ||
@@ -52,7 +53,8 @@ namespace Cloudformation4dotNET
                                 return api( dllSourceFile.Value, 
                                         environmentKey.HasValue() ? environmentKey.Values[0] : "prod", 
                                         buildVersion.HasValue() ? int.Parse(buildVersion.Values[0]) : 1, 
-                                        outputPah.HasValue() ? outputPah.Values[0] : "./");
+                                        outputPah.HasValue() ? outputPah.Values[0] : "./",
+                                        lambdasPrefix.HasValue() ? lambdasPrefix.Values[0] : "myapi-");
                         }else{
                             app.ShowHelp();
                             return -1;
@@ -71,7 +73,7 @@ namespace Cloudformation4dotNET
             }
         }
 
-        static int api(string dllSourceFile, string environmentKey = "prod", int buildVersion = 1, string outputPah = "./")
+        static int api(string dllSourceFile, string environmentKey = "prod", int buildVersion = 1, string outputPah = "./", string prefix = "myapi-")
         {
                
             try{
@@ -88,11 +90,11 @@ namespace Cloudformation4dotNET
 
                 // Build the cloudformation API Gateway related resources string to inject (including lambdas).
                 List<ResourceProperties> APIFunctionsList = GetAPIFunctions(assembly);
-                string cloudformationAPIResources = GetCloudformationAPIResourcesString(assemblyName, APIFunctionsList, environmentKey);
+                string cloudformationAPIResources = GetCloudformationAPIResourcesString(assemblyName, APIFunctionsList, environmentKey, prefix);
  
                 // Build the cloudformation Lambdas related resources string to inject.
                 List<ResourceProperties> LambdaFunctionsList = GetLambdaFunctions(assembly, assemblyName);
-                string cloudformationLambdaResources = GetCloudformationLambdaResourcesString(assemblyName, LambdaFunctionsList, environmentKey);
+                string cloudformationLambdaResources = GetCloudformationLambdaResourcesString(assemblyName, LambdaFunctionsList, environmentKey, prefix);
 
                 string source = System.IO.File.ReadAllText(samFile);   
                 if (File.Exists(samBaseFile)) File.Delete(samBaseFile);
@@ -113,8 +115,8 @@ namespace Cloudformation4dotNET
                 // Build the cloudformation lambda's versions resources string to inject.      
                 string cloudformationLambdasVersionsResources = 
                     AppendTitle("Lambdas versions") + 
-                    GetCloudformationLambdasVersionsResourcesString(APIFunctionsList, environmentKey, buildVersion) +
-                    GetCloudformationLambdasVersionsResourcesString(LambdaFunctionsList, environmentKey, buildVersion);
+                    GetCloudformationLambdasVersionsResourcesString(APIFunctionsList, environmentKey, buildVersion, prefix) +
+                    GetCloudformationLambdasVersionsResourcesString(LambdaFunctionsList, environmentKey, buildVersion, prefix);
 
                 string sourceX = System.IO.File.ReadAllText(samXFile);   
                 if (File.Exists(samEnvironmentFile)) File.Delete(samEnvironmentFile);
@@ -169,7 +171,7 @@ namespace Cloudformation4dotNET
             return functionsList;
         }
 
-        static string GetCloudformationAPIResourcesString(string AssemblyName, List<ResourceProperties> functions, string Environment){
+        static string GetCloudformationAPIResourcesString(string AssemblyName, List<ResourceProperties> functions, string Environment, string NamePrefix){
             // the cloudformation deployment resrouces.
             StringBuilder cloudformationResources = new StringBuilder();
             cloudformationResources.Append(AppendTitle("API Gateway root paths"));
@@ -200,7 +202,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(1, String.Format("{0}Function:", functionCFResourceName)));
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::Serverless::Function"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: myapi-{0}", function.MethodName)));
+                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: {0}{1}", NamePrefix, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: {0}::{1}::{2} ", AssemblyName, function.MethodClassPath, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, "Role: !Ref myAPILambdaExecutionRole"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
@@ -357,7 +359,7 @@ namespace Cloudformation4dotNET
             return cloudformationResources.ToString();
         }
 
-         static string GetCloudformationLambdaResourcesString(string AssemblyName, List<ResourceProperties> functions, string Environment){
+         static string GetCloudformationLambdaResourcesString(string AssemblyName, List<ResourceProperties> functions, string Environment, string NamePrefix){
             // the cloudformation deployment resrouces.
             StringBuilder cloudformationResources = new StringBuilder();
             cloudformationResources.Append(AppendTitle("Standalone Lambdas"));
@@ -369,7 +371,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(1, String.Format("{0}Function:", functionCFResourceName)));
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::Serverless::Function"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: myapi-{0}", function.MethodName)));
+                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: {0}{1}", NamePrefix, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: {0}::{1}::{2} ", AssemblyName, function.MethodClassPath, function.MethodName)));               
                 cloudformationResources.AppendLine(IndentText(3, "Role: !Ref myAPILambdaExecutionRole"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
@@ -380,7 +382,7 @@ namespace Cloudformation4dotNET
             return cloudformationResources.ToString();
         }
 
-        static string GetCloudformationLambdasVersionsResourcesString(List<ResourceProperties> functions, string Environment, int BuildVersion){
+        static string GetCloudformationLambdasVersionsResourcesString(List<ResourceProperties> functions, string Environment, int BuildVersion, string NamePrefix){
 
             StringBuilder cloudformationResources = new StringBuilder();
             
@@ -398,7 +400,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::Lambda::Version"));
                 cloudformationResources.AppendLine(IndentText(2, "DeletionPolicy: Retain"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: myapi-{0}", function.MethodName))); 
+                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: {0}{1}", NamePrefix, function.MethodName))); 
                 
                 cloudformationResources.AppendLine();
                 cloudformationResources.AppendLine(IndentText(1, String.Format("{0}Alias:", functionCFResourceName)));
@@ -406,7 +408,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(2, "DeletionPolicy: Retain"));
                 cloudformationResources.AppendLine(IndentText(2, String.Format("DependsOn: {0}Version{1}", functionCFResourceName, environmentVersion)));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: myapi-{0}", function.MethodName)));
+                cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: {0}{1}", NamePrefix, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionVersion: !GetAtt {0}Version{1}.Version", functionCFResourceName, environmentVersion)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Name: {0}", Environment)));
                 cloudformationResources.AppendLine();
