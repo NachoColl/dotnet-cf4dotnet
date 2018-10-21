@@ -231,7 +231,9 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(4, "Type: AWS_PROXY"));
                 cloudformationResources.AppendLine(IndentText(4, "IntegrationHttpMethod: POST"));
                 cloudformationResources.AppendLine(IndentText(4, "Uri: !Sub \"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${" + functionCFResourceName + "Function.Arn}:${!stageVariables.lambdaAlias}/invocations\""));
-                cloudformationResources.AppendLine(IndentText(4, "Credentials: !Ref myAPILambdaExecutionRole"));
+                /* setting "lambda:InvokeFunction" permissions on the Lambda role
+                cloudformationResources.AppendLine(IndentText(4, "Credentials: !GetAtt myAPILambdaExecutionRole.Arn"));
+                */
                 cloudformationResources.AppendLine();
 
 
