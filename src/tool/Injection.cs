@@ -204,7 +204,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: {0}{1}", NamePrefix, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: {0}::{1}::{2} ", AssemblyName, function.MethodClassPath, function.MethodName)));
-                cloudformationResources.AppendLine(IndentText(3, "Role: !Ref myAPILambdaExecutionRole"));
+                cloudformationResources.AppendLine(IndentText(3, "Role: !GetAtt myAPILambdaExecutionRole.Arn"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
                 cloudformationResources.AppendLine();
 
@@ -373,7 +373,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: {0}{1}", NamePrefix, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: {0}::{1}::{2} ", AssemblyName, function.MethodClassPath, function.MethodName)));               
-                cloudformationResources.AppendLine(IndentText(3, "Role: !Ref myAPILambdaExecutionRole"));
+                cloudformationResources.AppendLine(IndentText(3, "Role: !GetAtt myAPILambdaExecutionRole.Arn"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
                 cloudformationResources.AppendLine();
          
