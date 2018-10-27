@@ -44,11 +44,13 @@ Resources:
 
   #################################################################################
   # Lambda Execution Role                                                         #
+  # Check your lambdas prefix code for "lambda:InvokeFunction" action             #
   #################################################################################
 
   myAPILambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub "MyDemoProject.Lambdas"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -56,8 +58,9 @@ Resources:
           Principal:
             Service:
             - lambda.amazonaws.com
+            - apigateway.amazonaws.com
           Action:
-          - sts:AssumeRole
+          - sts:AssumeRole      
       Path: "/"
       Policies:
       - PolicyName: root
@@ -68,8 +71,11 @@ Resources:
             Action:
             - logs:*
             Resource: arn:aws:logs:*:*:*
-  
-            
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:MyAWSTagCode*"
+             
   # do not delete this mark
   # deploy will use it to inject cloudformation resources.
 

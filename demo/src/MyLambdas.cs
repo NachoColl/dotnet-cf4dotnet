@@ -9,10 +9,9 @@ using Newtonsoft.Json;
 namespace MyDemoProject {
 
     public class Lambdas
-    {
-        
+    {       
         /* A function that will get Lambda resources created (only) */
-        [Cloudformation4dotNET.Lambda.LambdaResourceProperties(TimeoutInSeconds=2)]
-        public void Echo(string Input, ILambdaContext Context) => Context?.Logger?.Log(Input.ToUpper());
+        [Cloudformation4dotNET.Lambda.LambdaResourceProperties(TimeoutInSeconds=5)]
+        public void Echo(Object Input, ILambdaContext Context) => Context?.Logger?.Log(JsonConvert.SerializeObject(Input));
     }
 }

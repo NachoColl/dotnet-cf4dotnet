@@ -15,7 +15,7 @@ namespace MyDemoProject
     {
 
         /* A function that will get APIGateway + Lambda resources created. */
-        [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=2)]
+        [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=5)]
         public APIGatewayProxyResponse CheckStatus(APIGatewayProxyRequest Request, ILambdaContext context) => new APIGatewayProxyResponse
         {
             StatusCode = 200,

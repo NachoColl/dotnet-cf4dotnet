@@ -44,11 +44,13 @@ Resources:
 
   #################################################################################
   # Lambda Execution Role                                                         #
+  # Check your lambdas prefix code for "lambda:InvokeFunction" action             #
   #################################################################################
 
   myAPILambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub "MyDemoProject.Lambdas"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -56,8 +58,9 @@ Resources:
           Principal:
             Service:
             - lambda.amazonaws.com
+            - apigateway.amazonaws.com
           Action:
-          - sts:AssumeRole
+          - sts:AssumeRole      
       Path: "/"
       Policies:
       - PolicyName: root
@@ -68,8 +71,11 @@ Resources:
             Action:
             - logs:*
             Resource: arn:aws:logs:*:*:*
-  
-            
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:MyAWSTagCode*"
+             
   # do not delete this mark
   # deploy will use it to inject cloudformation resources.
 
@@ -98,8 +104,8 @@ Resources:
     Properties:
       FunctionName: myapi-CheckStatus
       Handler: MyDemoAssemblyName::MyDemoProject.APIGateway::CheckStatus 
-      Role: !Ref myAPILambdaExecutionRole
-      Timeout: 2
+      Role: !GetAtt myAPILambdaExecutionRole.Arn
+      Timeout: 5
 
   statusAPIResource:
     Type: AWS::ApiGateway::Resource
@@ -119,7 +125,7 @@ Resources:
         Type: AWS_PROXY
         IntegrationHttpMethod: POST
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckStatusFunction.Arn}:${!stageVariables.lambdaAlias}/invocations"
-        Credentials: !Ref myAPILambdaExecutionRole
+        Credentials: !GetAtt myAPILambdaExecutionRole.Arn
 
   # enabling OPTIONS for CheckStatus
 
@@ -203,8 +209,8 @@ Resources:
     Properties:
       FunctionName: myapi-Echo
       Handler: MyDemoAssemblyName::MyDemoProject.Lambdas::Echo 
-      Role: !Ref myAPILambdaExecutionRole
-      Timeout: 2
+      Role: !GetAtt myAPILambdaExecutionRole.Arn
+      Timeout: 5
 
   # END of injected code
 

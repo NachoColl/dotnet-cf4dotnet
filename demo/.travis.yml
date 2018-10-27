@@ -1,0 +1,28 @@
+sudo: required
+language: csharp
+mono: none
+dotnet: 2.1
+    
+branches:
+  except:
+    # this is required to avoid building tags.
+    - /^v?\d+\.\d+\.\d+(\w*\W*)*$/
+    # dev or master branch should not be published,
+    # we use test, staging and prod branches.
+    - dev
+    - master
+install:
+  # install awscli for deploying
+  - pip install awscli --upgrade --user
+  # install Cloudformation4dotNET tool
+  - dotnet tool install NachoColl.Cloudformation4dotNET --version 1.0.* --tool-path $TRAVIS_BUILD_DIR/tools
+script:
+  # unit testing
+  - dotnet test $TRAVIS_BUILD_DIR/test
+deploy:
+  - provider: script
+    skip_cleanup: true
+    # https://docs.travis-ci.com/user/environment-variables#default-environment-variables
+    script: bash $TRAVIS_BUILD_DIR/.deploy.sh $TRAVIS_BRANCH # expected: test/staging/prod branch names.
+    on:
+      all_branches: true

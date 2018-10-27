@@ -25,7 +25,7 @@ namespace MyTests {
         public void Echo_SimpleTest () {
 
             myLambdas.Echo(Input: "Hello World!", Context: context);       
-            Assert.Contains("Hello World!".ToUpper(), ((TestLambdaLogger)context.Logger).Buffer.ToString());
+            Assert.Contains("Hello World!", ((TestLambdaLogger)context.Logger).Buffer.ToString());
          
         }
 

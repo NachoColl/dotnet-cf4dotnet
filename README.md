@@ -14,7 +14,7 @@ dotnet new cf4dotnet -n MyDemoProject -as MyDemoAssemblyName -t MyAWSTagCode
 dotnet publish ./src -o ../artifact --framework netcoreapp2.1 -c Release
 
 # install cf4dotnet tool
-dotnet tool install --global NachoColl.Cloudformation4dotNET --version 0.0.33
+dotnet tool install --global NachoColl.Cloudformation4dotNET --version 1.0.*
 
 # get the required AWS Cloudformation templates to deploy your code on AWS
 dotnet cf4dotnet api E:\<your-project-path>\artifact\MyDemoAssemblyName.dll -e prod
@@ -31,7 +31,7 @@ You get [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.y
 For example, if you mark a function as follows:
 
 ```csharp
-[Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=2)]
+[Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", EnableCORS=true, TimeoutInSeconds=5)]
 public APIGatewayProxyResponse CheckStatusFunction(...) { 
   ...
 }
@@ -47,7 +47,7 @@ CheckStatusFunction:
       FunctionName: myapi-CheckStatus
       Handler: MyDemoAssemblyName::MyDemoProject.APIGateway::CheckStatus 
       Role: !Ref myAPILambdaExecutionRole
-      Timeout: 2
+      Timeout: 5
 
 statusAPIResource:
     Type: AWS::ApiGateway::Resource
@@ -67,7 +67,7 @@ CheckStatusAPIMethod:
         Type: AWS_PROXY
         IntegrationHttpMethod: POST
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckStatusFunction.Arn}:${!stageVariables.lambdaAlias}/invocations"
-        Credentials: !Ref myAPILambdaExecutionRole
+        Credentials: !GetAtt myAPILambdaExecutionRole.Arn
 
 ...
 ```
@@ -111,7 +111,7 @@ namespace MyAPI {
         
         /* A function that will get Lambda resources created (only) */
         [Cloudformation4dotNET.Lambda.LambdaResourceProperties(TimeoutInSeconds=2)]
-        public void Echo(string Input, ILambdaContext Context) => Context?.Logger?.Log(Input.ToUpper());
+        public void Echo(Object Input, ILambdaContext Context) => Context?.Logger?.Log(JsonConvert.SerializeObject(Input));
         
     }
 }
