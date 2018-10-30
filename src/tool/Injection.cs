@@ -209,9 +209,10 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine();
 
                 // to create 2nd level paths (e.g. utils/ip/)
+                // TODO: allow >2 levels!
                 string[] pathParts = function.PathPart.Split("/");   
                 if (pathParts.Count()>1){     
-                    cloudformationResources.AppendLine(IndentText(1, String.Format("{0}APIResource:", ReplaceNonAlphanumeric(pathParts[1]))));
+                    cloudformationResources.AppendLine(IndentText(1, String.Format("{0}APIResource:", ReplaceNonAlphanumeric(pathParts[0]+pathParts[1]))));
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Resource"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
                     cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
@@ -224,7 +225,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Method"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
                 cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
-                cloudformationResources.AppendLine(IndentText(3, String.Format("ResourceId: !Ref {0}", String.Format("{0}APIResource", ReplaceNonAlphanumeric(pathParts.Count()==1 ? function.MethodName : pathParts[pathParts.Count()-1])))));
+                cloudformationResources.AppendLine(IndentText(3, String.Format("ResourceId: !Ref {0}", String.Format("{0}APIResource", ReplaceNonAlphanumeric(pathParts.Count()==1 ? function.MethodName : pathParts[0]+pathParts[1])))));
                 cloudformationResources.AppendLine(IndentText(3, "HttpMethod: POST"));
                 cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));
                 cloudformationResources.AppendLine(IndentText(3, "Integration:"));
