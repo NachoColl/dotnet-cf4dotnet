@@ -244,7 +244,7 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Method"));
                     cloudformationResources.AppendLine(IndentText(2, "Properties:"));
                     cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
-                    cloudformationResources.AppendLine(IndentText(3, String.Format("ResourceId: !Ref {0}", String.Format("{0}APIResource", ReplaceNonAlphanumeric(pathParts.Count()==1 ? function.MethodName : pathParts[pathParts.Count()-1])))));
+                    cloudformationResources.AppendLine(IndentText(3, String.Format("ResourceId: !Ref {0}", String.Format("{0}APIResource", ReplaceNonAlphanumeric(pathParts.Count()==1 ? function.MethodName : pathParts[0]+pathParts[1])))));
                     cloudformationResources.AppendLine(IndentText(3, "HttpMethod: OPTIONS"));
                     cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));
                     cloudformationResources.AppendLine(IndentText(3, "Integration:"));

@@ -107,7 +107,7 @@ Resources:
       Role: !GetAtt myAPILambdaExecutionRole.Arn
       Timeout: 5
 
-  statusAPIResource:
+  utilsstatusAPIResource:
     Type: AWS::ApiGateway::Resource
     Properties:
       RestApiId: !Ref myAPI
@@ -118,7 +118,7 @@ Resources:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref myAPI
-      ResourceId: !Ref statusAPIResource
+      ResourceId: !Ref utilsstatusAPIResource
       HttpMethod: POST
       AuthorizationType: NONE
       Integration:
