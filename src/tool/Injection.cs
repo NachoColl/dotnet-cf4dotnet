@@ -274,7 +274,7 @@ namespace Cloudformation4dotNET
              
             }
 
-            cloudformationResources.Append(AppendTitle("API GAteway stages"));
+            cloudformationResources.Append(AppendTitle("API Gateway stages"));
 
             switch (Environment){
 
