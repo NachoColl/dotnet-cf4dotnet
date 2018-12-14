@@ -10,6 +10,8 @@ namespace Cloudformation4dotNET.APIGateway
 
         public bool EnableCORS {get; set;} = false;
 
+        public bool APIKeyRequired {get; set;} = false;
+
         public APIGatewayResourceProperties(string PathPart){
             this.PathPart = PathPart;
         }

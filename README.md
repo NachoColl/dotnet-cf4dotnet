@@ -144,12 +144,19 @@ This is an initial 1.0.x version that fits my deployment needs! I will check for
 
 While you can use ```cf4dotnet``` to automatically build your dotNET code required AWS Cloudformation templates, take note you will only be able to:
 
+##### APIGateway
+
 - set and use a 2 level path for your API Gateway resources, e.g. ```contacts/get``` or ```utils/status```
+- set if an API Key is required
 - enable the next CORS rules:
 ```xml
 method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
 method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
 method.response.header.Access-Control-Allow-Origin: "'*'"
 ```
+
+##### Lambda 
+
 - set the related AWS Lambdas timeout.
+
 
