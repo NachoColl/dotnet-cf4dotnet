@@ -85,7 +85,7 @@ namespace Cloudformation4dotNET
                 string samBaseFile = string.Format("{0}/sam-base.yml", outputPah);
                 
                 /* Load your code assembly */
-                Assembly assembly = Assembly.LoadFile(dllSourceFile);
+                Assembly assembly = Assembly.LoadFrom(dllSourceFile);
                 string assemblyName = GetAssemblyName(dllSourceFile);
 
                 // Build the cloudformation API Gateway related resources string to inject (including lambdas).
