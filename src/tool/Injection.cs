@@ -85,6 +85,7 @@ namespace Cloudformation4dotNET
                 string samBaseFile = string.Format("{0}/sam-base.yml", outputPah);
                 
                 /* Load your code assembly */
+                AppDomain.CurrentDomain.AssemblyResolve += CheckLoaded;
                 Assembly assembly = Assembly.LoadFrom(dllSourceFile);
                 string assemblyName = GetAssemblyName(dllSourceFile);
 
@@ -128,6 +129,7 @@ namespace Cloudformation4dotNET
 
                 return 0;
             } catch(Exception e){
+                Console.WriteLine("Unexpected error running 'cf4dotnet api':");
                 Console.WriteLine(e.Message);
                 return -1;
             }
@@ -146,7 +148,7 @@ namespace Cloudformation4dotNET
                     APIGateway.APIGatewayResourceProperties apiGatewayProperties = 
                         (APIGateway.APIGatewayResourceProperties) methodInfo.GetCustomAttribute(typeof (APIGateway.APIGatewayResourceProperties));
                     if (apiGatewayProperties!=null)
-                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name){ MethodClassPath = methodInfo.DeclaringType.FullName,  MethodName = methodInfo.Name, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds});
+                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name){ MethodClassPath = methodInfo.DeclaringType.FullName,  MethodName = methodInfo.Name, APIKeyRequired = apiGatewayProperties.APIKeyRequired, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds});
                 }
             }
             return functionsList;
@@ -227,6 +229,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("ResourceId: !Ref {0}", String.Format("{0}APIResource", ReplaceNonAlphanumeric(pathParts.Count()==1 ? function.MethodName : pathParts[0]+pathParts[1])))));
               
+                Console.WriteLine(function.APIKeyRequired);
                 if (function.APIKeyRequired)
                     cloudformationResources.AppendLine(IndentText(3, "ApiKeyRequired: true"));
                     
@@ -435,6 +438,18 @@ namespace Cloudformation4dotNET
         static string ReplaceNonAlphanumeric(string Text) => new Regex("[^a-zA-Z0-9]").Replace(Text,"");
 
         static string AppendTitle(string Title) => new StringBuilder().AppendLine().AppendLine(IndentText(1, "############################################")).AppendLine(IndentText(1,$"# {Title}")).AppendLine(IndentText(1, "############################################")).AppendLine().ToString();
+      
+        private static Assembly CheckLoaded(object sender, ResolveEventArgs args)
+            {
+                foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    if (a.FullName.Equals(args.Name))
+                    {                        
+                        return a;
+                    }
+                }
+                return null;
+            }
         #endregion
 
     }
