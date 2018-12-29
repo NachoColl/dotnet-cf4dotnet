@@ -174,11 +174,36 @@ namespace Cloudformation4dotNET
         }
 
         static string GetCloudformationAPIResourcesString(string AssemblyName, List<ResourceProperties> functions, string Environment, string NamePrefix){
-            // the cloudformation deployment resrouces.
-            StringBuilder cloudformationResources = new StringBuilder();
-            cloudformationResources.Append(AppendTitle("API Gateway root paths"));
 
-            // create the root paths        
+            StringBuilder cloudformationResources = new StringBuilder();
+
+            // create the authorizers
+            cloudformationResources.Append(AppendTitle("API Gateway authorizers"));
+            
+            List<string> authorizers = new List<string>();
+            foreach(ResourceProperties function in functions){
+                if (function.Autorizer.Length > 0){
+                    if (!authorizers.Contains(function.Autorizer))    
+                        authorizers.Add(function.Autorizer);
+                }
+            }      
+
+            foreach(string authorizer in authorizers){
+                cloudformationResources.AppendLine(IndentText(1, String.Format("{0}Authorizer:", ReplaceNonAlphanumeric(authorizer))));
+                cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Authorizer"));
+                cloudformationResources.AppendLine(IndentText(2, "Properties:"));
+                cloudformationResources.AppendLine(IndentText(3, "Type: COGNITO_USER_POOLS"));
+                cloudformationResources.AppendLine(IndentText(3, "Name: " + authorizer));
+                cloudformationResources.AppendLine(IndentText(3, "IdentitySource:  method.request.header.Authorization"));
+                cloudformationResources.AppendLine(IndentText(3, "ProviderARNs:"));
+                cloudformationResources.AppendLine(IndentText(4, "- arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/" + authorizer));
+                cloudformationResources.AppendLine(IndentText(3, "RestApiId:"));
+                cloudformationResources.AppendLine(IndentText(4, "!Ref myAPI"));
+                cloudformationResources.AppendLine();      
+            }
+
+            // create the root paths  
+            cloudformationResources.Append(AppendTitle("API Gateway root paths"));                
             List<string> rootPaths = new List<string>();
             foreach(ResourceProperties function in functions){
                 string[] pathParts = function.PathPart.Split("/");
@@ -208,6 +233,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: {0}::{1}::{2} ", AssemblyName, function.MethodClassPath, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, "Role: !GetAtt myAPILambdaExecutionRole.Arn"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
+
                 cloudformationResources.AppendLine();
 
                 // to create 2nd level paths (e.g. utils/ip/)
@@ -246,6 +272,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(4, "IntegrationHttpMethod: POST"));
                 cloudformationResources.AppendLine(IndentText(4, "Uri: !Sub \"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${" + functionCFResourceName + "Function.Arn}:${!stageVariables.lambdaAlias}/invocations\""));
                 cloudformationResources.AppendLine(IndentText(4, "Credentials: !GetAtt myAPILambdaExecutionRole.Arn"));
+                
                 if (function.Autorizer.Length > 0){
                     cloudformationResources.AppendLine(IndentText(4, "PassthroughBehavior: WHEN_NO_TEMPLATES")); 
                     cloudformationResources.AppendLine(IndentText(4, "RequestTemplates:"));
