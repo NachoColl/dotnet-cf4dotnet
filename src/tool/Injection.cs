@@ -263,7 +263,7 @@ namespace Cloudformation4dotNET
                 if (function.Autorizer.Length > 0){
                     cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: COGNITO_USER_POOLS"));
                     cloudformationResources.AppendLine(IndentText(3, "AuthorizationScopes: "));
-                    cloudformationResources.AppendLine(IndentText(4, "- " + function.Autorizer));
+                    cloudformationResources.AppendLine(IndentText(4,  String.Format("- !Ref {0}Authorizer", ReplaceNonAlphanumeric(function.Autorizer))));
                 }else
                     cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));
 
