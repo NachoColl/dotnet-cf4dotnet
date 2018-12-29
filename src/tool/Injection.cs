@@ -148,7 +148,7 @@ namespace Cloudformation4dotNET
                     APIGateway.APIGatewayResourceProperties apiGatewayProperties = 
                         (APIGateway.APIGatewayResourceProperties) methodInfo.GetCustomAttribute(typeof (APIGateway.APIGatewayResourceProperties));
                     if (apiGatewayProperties!=null)
-                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name){ MethodClassPath = methodInfo.DeclaringType.FullName,  MethodName = methodInfo.Name, APIKeyRequired = apiGatewayProperties.APIKeyRequired, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds});
+                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name){ MethodClassPath = methodInfo.DeclaringType.FullName,  MethodName = methodInfo.Name, APIKeyRequired = apiGatewayProperties.APIKeyRequired, Autorizer = apiGatewayProperties.Autorizer,  EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds});
                 }
             }
             return functionsList;
@@ -229,12 +229,18 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("ResourceId: !Ref {0}", String.Format("{0}APIResource", ReplaceNonAlphanumeric(pathParts.Count()==1 ? function.MethodName : pathParts[0]+pathParts[1])))));
               
-                Console.WriteLine(function.APIKeyRequired);
                 if (function.APIKeyRequired)
                     cloudformationResources.AppendLine(IndentText(3, "ApiKeyRequired: true"));
                     
                 cloudformationResources.AppendLine(IndentText(3, "HttpMethod: POST"));
-                cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));
+
+                if (function.Autorizer.Length > 0){
+                    cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: COGNITO_USER_POOLS"));
+                    cloudformationResources.AppendLine(IndentText(3, "AuthorizationScopes: "));
+                    cloudformationResources.AppendLine(IndentText(4, "- " + function.Autorizer));
+                }else
+                    cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));
+
                 cloudformationResources.AppendLine(IndentText(3, "Integration:"));
                 cloudformationResources.AppendLine(IndentText(4, "Type: AWS_PROXY"));
                 cloudformationResources.AppendLine(IndentText(4, "IntegrationHttpMethod: POST"));

@@ -12,6 +12,8 @@ namespace Cloudformation4dotNET.APIGateway
 
         public bool APIKeyRequired {get; set;} = false;
 
+        public string Autorizer { get; set; } = "";
+
         public APIGatewayResourceProperties(string PathPart){
             this.PathPart = PathPart;
         }
