@@ -196,7 +196,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(3, "Name: " + authorizer));
                 cloudformationResources.AppendLine(IndentText(3, "IdentitySource:  method.request.header.Authorization"));
                 cloudformationResources.AppendLine(IndentText(3, "ProviderARNs:"));
-                cloudformationResources.AppendLine(IndentText(4, "- arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/" + authorizer));
+                cloudformationResources.AppendLine(IndentText(4, "- !Sub \"arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/" + authorizer + "\""));
                 cloudformationResources.AppendLine(IndentText(3, "RestApiId:"));
                 cloudformationResources.AppendLine(IndentText(4, "!Ref myAPI"));
                 cloudformationResources.AppendLine();      
@@ -284,8 +284,7 @@ namespace Cloudformation4dotNET
                 }
 
                 cloudformationResources.AppendLine();
-
-
+                
                 if (function.EnableCORS){
                     #region ENABLE CORS
                     cloudformationResources.AppendLine(IndentText(1,"# enabling OPTIONS for " + function.MethodName));
