@@ -23,7 +23,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\library\Cloudformation4dotNET.Library.csproj" />
+    <ProjectReference Include="..\lib\src\Cloudformation4dotNET.Library.csproj" />
   </ItemGroup>
 
 </Project>
