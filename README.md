@@ -90,7 +90,7 @@ namespace MyAPI
     {
 
         /* A function that will get APIGateway + Lambda resources created. */
-        [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status",  EnableCORS=true, TimeoutInSeconds=2)]
+        [Cloudformation4dotNET.APIGateway.APIGatewayResourceProperties("utils/status", APIKeyRequired=true,  EnableCORS=true, TimeoutInSeconds=2)]
         public APIGatewayProxyResponse CheckStatus(APIGatewayProxyRequest Request, ILambdaContext context) => new APIGatewayProxyResponse
         {
             StatusCode = 200,
@@ -111,7 +111,7 @@ namespace MyAPI {
     {
         
         /* A function that will get Lambda resources created (only) */
-        [Cloudformation4dotNET.Lambda.LambdaResourceProperties(TimeoutInSeconds=2)]
+        [Cloudformation4dotNET.Lambda.LambdaResourceProperties(TimeoutInSeconds=20)]
         public void Echo(Object Input, ILambdaContext Context) => Context?.Logger?.Log(JsonConvert.SerializeObject(Input));
         
     }
@@ -147,15 +147,24 @@ While you can use ```cf4dotnet``` to automatically build your dotNET code requir
 
 ##### APIGateway
 
-- set and use a 2 level path for your API Gateway resources, e.g. ```contacts/get``` or ```utils/status```
+- set and use a 2 level path for your API Gateway resources, e.g. ```contact/get``` or ```utils/status```
 - set if an API Key is required
-- enable the next CORS rules:
+- enable CORS, that will add the next rules:
 ```xml
 method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
 method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
 method.response.header.Access-Control-Allow-Origin: "'*'"
 ```
-- set COGNITO_USER_POOLS as authorizer
+- set COGNITO_USER_POOLS as authorizer, that will also add the next mapping template to the integration request:
+```cs
+{
+ "cognito":{
+    "sub" : "$context.authorizer.claims.sub",
+	"email" : "$context.authorizer.claims.email"
+    },
+ "body" : $input.json('$')
+}
+```
 
 ##### Lambda 
 

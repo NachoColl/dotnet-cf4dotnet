@@ -246,6 +246,16 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(4, "IntegrationHttpMethod: POST"));
                 cloudformationResources.AppendLine(IndentText(4, "Uri: !Sub \"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${" + functionCFResourceName + "Function.Arn}:${!stageVariables.lambdaAlias}/invocations\""));
                 cloudformationResources.AppendLine(IndentText(4, "Credentials: !GetAtt myAPILambdaExecutionRole.Arn"));
+                if (function.Autorizer.Length > 0){
+                    cloudformationResources.AppendLine(IndentText(4, "PassthroughBehavior: WHEN_NO_TEMPLATES")); 
+                    cloudformationResources.AppendLine(IndentText(4, "RequestTemplates:"));
+                    cloudformationResources.AppendLine(IndentText(5, "application/json: |")); 
+                    cloudformationResources.AppendLine(IndentText(5, "    {"));
+                    cloudformationResources.AppendLine(IndentText(5, "    \"cognito\": {\"sub\" : \"$context.authorizer.claims.sub\",\"email\" : \"$context.authorizer.claims.email\"},"));
+                    cloudformationResources.AppendLine(IndentText(5, "    \"body\": $input.json('$')"));
+                    cloudformationResources.AppendLine(IndentText(5, "    }"));
+                }
+
                 cloudformationResources.AppendLine();
 
 
