@@ -143,28 +143,29 @@ This is an initial 1.0.x version that fits my deployment needs! I will check for
 
 #### Limits
 
-While you can use ```cf4dotnet``` to automatically build your dotNET code required AWS Cloudformation templates, take note you will only be able to:
+While you can use ```cf4dotnet``` to automatically build your dotNET code required AWS Cloudformation templates, those are the settings you can define for now:
 
 ##### APIGateway
 
-- set and use a 2 level path for your API Gateway resources, e.g. ```contact/get``` or ```utils/status```
-- set if an API Key is required
-- enable CORS, that will add the next rules:
-```xml
-method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
-method.response.header.Access-Control-Allow-Origin: "'*'"
-```
-- set COGNITO_USER_POOLS as authorizer, that will also add the next mapping template to the integration request:
-```cs
-{
- "cognito":{
-    "sub" : "$context.authorizer.claims.sub",
-	"email" : "$context.authorizer.claims.email"
-    },
- "body" : $input.json('$')
-}
-```
+- set a 2 level path for your API Gateway resources, e.g. ```contact/get``` or ```utils/status```
+- define if an API Key is required (```APIKeyRequired=true```)
+- enable CORS (```EnableCORS=true```) , that will add the next rules: 
+    ```xml
+    method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+    method.response.header.Access-Control-Allow-Origin: "'*'"
+    ```
+- set an AWS Cognito user pool as an API authorizer (```Autorizer="us-east-1_xxxxxx"```), that will also add the next mapping template to the integration request,
+    ```cs
+    {
+    "cognito":{
+        "sub" : "$context.authorizer.claims.sub",
+	    "email" : "$context.authorizer.claims.email"
+        },
+    "body" : $input.json('$')
+    }
+    ```
+    and expects the related authorization gets filled into ```Authorization``` header attribute.
 
 ##### Lambda 
 
