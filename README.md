@@ -151,24 +151,12 @@ While you can use ```cf4dotnet``` to automatically build your dotNET code requir
 - define if an API Key is required (```APIKeyRequired=true```)
 - enable CORS (```EnableCORS=true```) , that will add the next rules: 
     ```xml
-    method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,IdentityPoolId,IdentityId'"
     method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
     method.response.header.Access-Control-Allow-Origin: "'*'"
     ```
-- set an AWS Cognito user pool as an API authorizer (```Autorizer="us-east-1_xxxxxx"```), that will also add the next mapping template to the integration request,
-    ```cs
-    {
-    "cognito":{
-        "sub" : "$context.authorizer.claims.sub",
-	    "email" : "$context.authorizer.claims.email"
-        },
-    "body" : $input.json('$')
-    }
-    ```
-    and expects the related authorization gets filled into ```Authorization``` header attribute.
+- set an AWS Cognito user pool as an API authorizer (```Autorizer="us-east-1_xxxxxx"```).
 
 ##### Lambda 
 
 - set the related AWS Lambdas timeout.
-
-

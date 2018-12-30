@@ -262,7 +262,6 @@ namespace Cloudformation4dotNET
 
                 if (function.Autorizer.Length > 0){
                     cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: COGNITO_USER_POOLS"));
-                    //cloudformationResources.AppendLine(IndentText(3, "AuthorizationScopes: "));
                     cloudformationResources.AppendLine(IndentText(3,  String.Format("AuthorizerId: !Ref {0}Authorizer", ReplaceNonAlphanumeric(function.Autorizer))));
                 }else
                     cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));
@@ -273,6 +272,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(4, "Uri: !Sub \"arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${" + functionCFResourceName + "Function.Arn}:${!stageVariables.lambdaAlias}/invocations\""));
                 cloudformationResources.AppendLine(IndentText(4, "Credentials: !GetAtt myAPILambdaExecutionRole.Arn"));
                 
+                /* already added when using lambda proxy integration
                 if (function.Autorizer.Length > 0){
                     cloudformationResources.AppendLine(IndentText(4, "PassthroughBehavior: WHEN_NO_TEMPLATES")); 
                     cloudformationResources.AppendLine(IndentText(4, "RequestTemplates:"));
@@ -282,6 +282,7 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(5, "    \"body\": $input.json('$')"));
                     cloudformationResources.AppendLine(IndentText(5, "    }"));
                 }
+                */
 
                 cloudformationResources.AppendLine();
                 
@@ -300,7 +301,7 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(4, "Type: MOCK"));
                     cloudformationResources.AppendLine(IndentText(4, "IntegrationResponses:"));
                     cloudformationResources.AppendLine(IndentText(5,"-  ResponseParameters:"));
-                    cloudformationResources.AppendLine(IndentText(6,"  method.response.header.Access-Control-Allow-Headers: \"'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'\""));
+                    cloudformationResources.AppendLine(IndentText(6,"  method.response.header.Access-Control-Allow-Headers: \"'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,IdentityPoolId,IdentityId'\""));
                     cloudformationResources.AppendLine(IndentText(6,"  method.response.header.Access-Control-Allow-Methods: \"'POST,OPTIONS'\""));
                     cloudformationResources.AppendLine(IndentText(6,"  method.response.header.Access-Control-Allow-Origin: \"'*'\""));
                     cloudformationResources.AppendLine(IndentText(5,"   ResponseTemplates:"));
