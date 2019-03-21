@@ -126,13 +126,13 @@ namespace MyAPI {
 Once your code is ready, install and run [dotnet-cf4dotnet](https://www.nuget.org/packages/NachoColl.Cloudformation4dotNET/) indicating your *code file*, the *environment name* and the *version number* (version number is used to create new AWS Lambda versions):
 
 ```bash
-dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name>
+dotnet-cf4dotnet <your-code-dll-file> -o <output-path> -b <build-version-number> -e <environment-name> -n <api-name> -r <rate-limit> -b <burst-limit>
 ```
 
 As an example, if you run the command on the provided template project,
 
 ```bash
-dotnet cf4dotnet api E:\Git\public\Cloudformation4dotNET\dotnet-cf4dotnet\demo\artifact\MyDemoAssemblyName.dll
+dotnet cf4dotnet api D:\Git\projects\cf4dotnet\dotnet-cf4dotnet\demo\artifact\MyDemoAssemblyName.dll
 ```
 you get the next [sam-base.yml](./demo/sam-base.yml) and [sam-prod.yml](./demo/sam-prod.yml) cloudformation templates ready to get deployed on AWS:
 

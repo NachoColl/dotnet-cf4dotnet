@@ -42,7 +42,7 @@ namespace Cloudformation4dotNET
                     // optionals
                     var apiName = config.Option("-n|--name <api-name>", "API Name (default: 'api').", CommandOptionType.SingleValue);
                     var apiRate = config.Option("-r|--rate <api-rate>", "API Rate Limit (default: '100').", CommandOptionType.SingleValue);
-                    var apiBurst = config.Option("-n|--name <api-rate-burst>", "API Rate Burst (default: '200').", CommandOptionType.SingleValue);
+                    var apiBurst = config.Option("-b|--burst <api-rate-burst>", "API Rate Burst (default: '200').", CommandOptionType.SingleValue);
 
                     var environmentKey = config.Option("-e|--environment <dev/test/qa/staging/prod>", "Environment (default: 'prod').", CommandOptionType.SingleValue);
                     var accountsConfiguration = config.Option("-c|--configuration <2-accounts>", "Accounts configuration (default: '2-accounts').", CommandOptionType.SingleValue);
@@ -223,7 +223,7 @@ namespace Cloudformation4dotNET
             cloudformationResources.AppendLine(IndentText(2, "Properties:"));
             cloudformationResources.AppendLine(IndentText(3, "ApiStages:"));
             cloudformationResources.AppendLine(IndentText(4, "- ApiId: !Ref myAPI"));
-            cloudformationResources.AppendLine(IndentText(4, string.Format("- Stage: !Ref {0}", Environment)));
+            cloudformationResources.AppendLine(IndentText(4, string.Format("- Stage: !Ref {0}", FirstCharToUpper(Environment))));
             cloudformationResources.AppendLine(IndentText(3, string.Format("Description: {0} usage plan.", Environment)));
             cloudformationResources.AppendLine(IndentText(3, "Throttle:"));
             cloudformationResources.AppendLine(IndentText(4, string.Format("BurstLimit: {0}", ApiRate)));
