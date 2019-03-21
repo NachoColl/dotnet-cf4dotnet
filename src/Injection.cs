@@ -40,6 +40,10 @@ namespace Cloudformation4dotNET
                     var environments = (new List<string> { "dev", "test", "qa", "staging", "prod" });
 
                     // optionals
+                    var apiName = config.Option("-n|--name <api-name>", "API Name (default: 'api').", CommandOptionType.SingleValue);
+                    var apiRate = config.Option("-r|--rate <api-rate>", "API Rate Limit (default: '100').", CommandOptionType.SingleValue);
+                    var apiBurst = config.Option("-n|--name <api-rate-burst>", "API Rate Burst (default: '200').", CommandOptionType.SingleValue);
+
                     var environmentKey = config.Option("-e|--environment <dev/test/qa/staging/prod>", "Environment (default: 'prod').", CommandOptionType.SingleValue);
                     var accountsConfiguration = config.Option("-c|--configuration <2-accounts>", "Accounts configuration (default: '2-accounts').", CommandOptionType.SingleValue);
                     var buildVersion = config.Option("-b|--build <build-version>", "Build version number used to create incremental resources (default: '1').", CommandOptionType.SingleValue);
@@ -61,7 +65,10 @@ namespace Cloudformation4dotNET
                                         environmentKey.HasValue() ? environmentKey.Values[0] : "prod",
                                         buildVersion.HasValue() ? int.Parse(buildVersion.Values[0]) : 1,
                                         outputPah.HasValue() ? outputPah.Values[0] : "./",
-                                        lambdasPrefix.HasValue() ? lambdasPrefix.Values[0] : "myapi-");
+                                        lambdasPrefix.HasValue() ? lambdasPrefix.Values[0] : "myapi-",
+                                        apiName.HasValue() ? apiName.Values[0] : "api",
+                                        apiRate.HasValue() ? apiRate.Values[0] : "100",
+                                        apiBurst.HasValue() ? apiBurst.Values[0] : "200");
                         }
                         else
                         {
@@ -84,7 +91,7 @@ namespace Cloudformation4dotNET
             }
         }
 
-        static int api(string dllSourceFile, string environmentKey = "prod", int buildVersion = 1, string outputPah = "./", string prefix = "myapi-")
+        static int api(string dllSourceFile, string environmentKey = "prod", int buildVersion = 1, string outputPah = "./", string prefix = "myapi-", string name = "api", string rate = "100", string burst = "200")
         {
 
             try
@@ -103,7 +110,7 @@ namespace Cloudformation4dotNET
 
                 // Build the cloudformation API Gateway related resources string to inject (including lambdas).
                 List<ResourceProperties> APIFunctionsList = GetAPIFunctions(assembly);
-                string cloudformationAPIResources = GetCloudformationAPIResourcesString(assemblyName, APIFunctionsList, environmentKey, prefix);
+                string cloudformationAPIResources = GetCloudformationAPIResourcesString(assemblyName, APIFunctionsList, environmentKey, prefix, name, rate, burst);
 
                 // Build the cloudformation Lambdas related resources string to inject.
                 List<ResourceProperties> LambdaFunctionsList = GetLambdaFunctions(assembly, assemblyName);
@@ -191,10 +198,39 @@ namespace Cloudformation4dotNET
             return functionsList;
         }
 
-        static string GetCloudformationAPIResourcesString(string AssemblyName, List<ResourceProperties> functions, string Environment, string NamePrefix)
+        static string GetCloudformationAPIResourcesString(string AssemblyName, List<ResourceProperties> functions, string Environment, string NamePrefix, string ApiName, string ApiRate, string ApiBurst)
         {
 
             StringBuilder cloudformationResources = new StringBuilder();
+
+            cloudformationResources.Append(AppendTitle("API Gateway"));
+
+            cloudformationResources.AppendLine(IndentText(1, "myAPI:"));
+            cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::RestApi"));
+            cloudformationResources.AppendLine(IndentText(2, "Properties:"));
+            cloudformationResources.AppendLine(IndentText(3, string.Format("Name: {0}-{1}", ApiName, Environment)));
+            cloudformationResources.AppendLine(IndentText(3, "EndpointConfiguration:"));
+            cloudformationResources.AppendLine(IndentText(4, "Types:"));
+            cloudformationResources.AppendLine(IndentText(5, "- REGIONAL"));
+
+            cloudformationResources.AppendLine();
+
+            cloudformationResources.AppendLine(IndentText(1, "myAPIUsagePlan:"));
+            cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::UsagePlan"));
+            cloudformationResources.AppendLine(IndentText(2, "DependsOn:"));
+            cloudformationResources.AppendLine(IndentText(3, "- myAPI"));
+            cloudformationResources.AppendLine(IndentText(3, string.Format("- {0}", FirstCharToUpper(Environment))));
+            cloudformationResources.AppendLine(IndentText(2, "Properties:"));
+            cloudformationResources.AppendLine(IndentText(3, "ApiStages:"));
+            cloudformationResources.AppendLine(IndentText(4, "- ApiId: !Ref myAPI"));
+            cloudformationResources.AppendLine(IndentText(4, string.Format("- Stage: !Ref {0}", Environment)));
+            cloudformationResources.AppendLine(IndentText(3, string.Format("Description: {0} usage plan.", Environment)));
+            cloudformationResources.AppendLine(IndentText(3, "Throttle:"));
+            cloudformationResources.AppendLine(IndentText(4, string.Format("BurstLimit: {0}", ApiRate)));
+            cloudformationResources.AppendLine(IndentText(4, string.Format("RateLimit: {0}", ApiBurst)));
+            cloudformationResources.AppendLine(IndentText(3, string.Format("UsagePlanName: {0}-{1}-usageplan", ApiName, Environment)));
+
+            cloudformationResources.AppendLine();
 
             // create the authorizers
             cloudformationResources.Append(AppendTitle("API Gateway authorizers"));

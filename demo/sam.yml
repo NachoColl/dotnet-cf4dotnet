@@ -1,9 +1,8 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: 'AWS::Serverless-2016-10-31'
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
 Description: MyDemoProject Base Resources.
 
 Parameters:
-
   APIName:
     Type: String
     Default: MyDemoProject
@@ -16,32 +15,16 @@ Parameters:
     Description: The package file name (e.g. 'mySourceCode')
 
 Globals:
-
   Function:
     Runtime: dotnetcore2.1
-    CodeUri: 
+    CodeUri:
       Bucket: !Ref ArtifactS3Bucket
-      Key: !Ref ArtifactS3BucketKey  
+      Key: !Ref ArtifactS3BucketKey
     Timeout: 60
-    Tags: 
+    Tags:
       appcode: "MyAWSTagCode"
-          
+
 Resources:
-
-  #################################################################################
-  # API Gateway definition                                                        #
-  #################################################################################
-
-  
-  myAPI: 
-    Type: "AWS::ApiGateway::RestApi"
-    Properties:
-      Description: "My API"
-      Name: !Ref APIName
-      EndpointConfiguration:
-        Types:
-        - REGIONAL
-
   #################################################################################
   # Lambda Execution Role                                                         #
   # Check your lambdas prefix code for "lambda:InvokeFunction" action             #
@@ -52,37 +35,35 @@ Resources:
     Properties:
       RoleName: !Sub "MyDemoProject.Lambdas"
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - lambda.amazonaws.com
-            - apigateway.amazonaws.com
-          Action:
-          - sts:AssumeRole      
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - apigateway.amazonaws.com
+            Action:
+              - sts:AssumeRole
       Path: "/"
       Policies:
-      - PolicyName: root
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Action:
-            - logs:*
-            Resource: arn:aws:logs:*:*:*
-          - Effect: Allow
-            Action:
-            - lambda:InvokeFunction
-            Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:MyAWSTagCode*"
-             
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:MyAWSTagCode*"
+
   # do not delete this mark
   # deploy will use it to inject cloudformation resources.
-
   # @INJECT
 
 Outputs:
-
   myAPIId:
     Description: API Gateway ID
     Value: !Ref myAPI
