@@ -367,7 +367,7 @@ namespace Cloudformation4dotNET
                     cloudformationResources.AppendLine(IndentText(3, string.Format("StageName: {0}", Environment)));
                     cloudformationResources.AppendLine(IndentText(3, string.Format("Description: API {0}", FirstCharToUpper(Environment))));
                     cloudformationResources.AppendLine(IndentText(3, "RestApiId: !Ref myAPI"));
-                    cloudformationResources.AppendLine(IndentText(3, String.Format("DeploymentId: !Ref {0}Deployment:", FirstCharToUpper(Environment))));
+                    cloudformationResources.AppendLine(IndentText(3, String.Format("DeploymentId: !Ref {0}Deployment", FirstCharToUpper(Environment))));
                     cloudformationResources.AppendLine(IndentText(3, "Variables:"));
                     cloudformationResources.AppendLine(IndentText(4, String.Format("lambdaAlias: {0}", Environment)));
 
