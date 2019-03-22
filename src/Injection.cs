@@ -42,7 +42,7 @@ namespace Cloudformation4dotNET
                     // optionals
                     var apiName = config.Option("-n|--name <api-name>", "API Name (default: 'api').", CommandOptionType.SingleValue);
                     var apiRate = config.Option("-r|--rate <api-rate>", "API Rate Limit (default: '100').", CommandOptionType.SingleValue);
-                    var apiBurst = config.Option("-b|--burst <api-rate-burst>", "API Rate Burst (default: '200').", CommandOptionType.SingleValue);
+                    var apiBurst = config.Option("-rb|--burst <api-rate-burst>", "API Rate Burst (default: '200').", CommandOptionType.SingleValue);
 
                     var environmentKey = config.Option("-e|--environment <dev/test/qa/staging/prod>", "Environment (default: 'prod').", CommandOptionType.SingleValue);
                     var accountsConfiguration = config.Option("-c|--configuration <2-accounts>", "Accounts configuration (default: '2-accounts').", CommandOptionType.SingleValue);
