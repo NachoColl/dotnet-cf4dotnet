@@ -224,7 +224,7 @@ namespace Cloudformation4dotNET
             cloudformationResources.AppendLine(IndentText(3, "ApiStages:"));
             cloudformationResources.AppendLine(IndentText(4, "- ApiId: !Ref myAPI"));
             cloudformationResources.AppendLine(IndentText(4, string.Format("  Stage: !Ref {0}", Environment)));
-            cloudformationResources.AppendLine(IndentText(3, string.Format("Description: {0} usage plan.", Environment)));
+            cloudformationResources.AppendLine(IndentText(3, string.Format("Description: {0} usage plan.", FirstCharToUpper(Environment))));
             cloudformationResources.AppendLine(IndentText(3, "Throttle:"));
             cloudformationResources.AppendLine(IndentText(4, string.Format("BurstLimit: {0}", ApiRate)));
             cloudformationResources.AppendLine(IndentText(4, string.Format("RateLimit: {0}", ApiBurst)));
