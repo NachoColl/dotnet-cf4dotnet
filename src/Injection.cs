@@ -506,6 +506,13 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: {0}::{1}::{2} ", AssemblyName, function.MethodClassPath, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, "Role: !GetAtt myAPILambdaExecutionRole.Arn"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
+                // VPC Settings
+                if (function.VPCSecurityGroupIdsParameterName.Length > 0 && function.VPCSubnetIdsParameterName.Length > 0)
+                {
+                    cloudformationResources.AppendLine(IndentText(3, "VpcConfig:"));
+                    cloudformationResources.AppendLine(IndentText(4, String.Format("SecurityGroupIds: !Ref {0} ", function.VPCSecurityGroupIdsParameterName)));
+                    cloudformationResources.AppendLine(IndentText(4, String.Format("SubnetIds: !Ref {0} ", function.VPCSubnetIdsParameterName)));
+                }
                 cloudformationResources.AppendLine();
 
             }
