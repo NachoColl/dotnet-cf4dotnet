@@ -171,7 +171,7 @@ namespace Cloudformation4dotNET
                     APIGateway.APIGatewayResourceProperties apiGatewayProperties =
                         (APIGateway.APIGatewayResourceProperties)methodInfo.GetCustomAttribute(typeof(APIGateway.APIGatewayResourceProperties));
                     if (apiGatewayProperties != null)
-                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, APIKeyRequired = apiGatewayProperties.APIKeyRequired, Autorizer = apiGatewayProperties.Autorizer, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds });
+                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, APIKeyRequired = apiGatewayProperties.APIKeyRequired, Autorizer = apiGatewayProperties.Autorizer, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds, Concurrency = apiGatewayProperties.Concurrency });
                 }
             }
             return functionsList;
@@ -192,7 +192,7 @@ namespace Cloudformation4dotNET
                     Lambda.LambdaResourceProperties lambdaProperties =
                         (Lambda.LambdaResourceProperties)methodInfo.GetCustomAttribute(typeof(Lambda.LambdaResourceProperties));
                     if (lambdaProperties != null && !(lambdaProperties is APIGateway.APIGatewayResourceProperties))
-                        functionsList.Add(new ResourceProperties(null) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, TimeoutInSeconds = lambdaProperties.TimeoutInSeconds, VPCSecurityGroupIdsParameterName = lambdaProperties.VPCSecurityGroupIdsParameterName, VPCSubnetIdsParameterName = lambdaProperties.VPCSubnetIdsParameterName });
+                        functionsList.Add(new ResourceProperties(null) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, TimeoutInSeconds = lambdaProperties.TimeoutInSeconds, Concurrency = lambdaProperties.Concurrency, VPCSecurityGroupIdsParameterName = lambdaProperties.VPCSecurityGroupIdsParameterName, VPCSubnetIdsParameterName = lambdaProperties.VPCSubnetIdsParameterName });
                 }
             }
             return functionsList;
@@ -290,6 +290,10 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(1, String.Format("{0}Function:", functionCFResourceName)));
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::Serverless::Function"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
+                if (function.Concurrency >= 0)
+                {
+                    cloudformationResources.AppendLine(IndentText(3, String.Format("ReservedConcurrentExecutions: {0}", function.Concurrency)));
+                }
                 cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: {0}{1}", NamePrefix, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: {0}::{1}::{2} ", AssemblyName, function.MethodClassPath, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, "Role: !GetAtt myAPILambdaExecutionRole.Arn"));
@@ -502,6 +506,10 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(1, String.Format("{0}Function:", functionCFResourceName)));
                 cloudformationResources.AppendLine(IndentText(2, "Type: AWS::Serverless::Function"));
                 cloudformationResources.AppendLine(IndentText(2, "Properties:"));
+                if (function.Concurrency >= 0)
+                {
+                    cloudformationResources.AppendLine(IndentText(3, String.Format("ReservedConcurrentExecutions: {0}", function.Concurrency)));
+                }
                 cloudformationResources.AppendLine(IndentText(3, String.Format("FunctionName: {0}{1}", NamePrefix, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, String.Format("Handler: {0}::{1}::{2} ", AssemblyName, function.MethodClassPath, function.MethodName)));
                 cloudformationResources.AppendLine(IndentText(3, "Role: !GetAtt myAPILambdaExecutionRole.Arn"));
