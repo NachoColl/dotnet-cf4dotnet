@@ -171,7 +171,7 @@ namespace Cloudformation4dotNET
                     APIGateway.APIGatewayResourceProperties apiGatewayProperties =
                         (APIGateway.APIGatewayResourceProperties)methodInfo.GetCustomAttribute(typeof(APIGateway.APIGatewayResourceProperties));
                     if (apiGatewayProperties != null)
-                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, APIKeyRequired = apiGatewayProperties.APIKeyRequired, Autorizer = apiGatewayProperties.Autorizer, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds, Concurrency = apiGatewayProperties.Concurrency });
+                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, APIKeyRequired = apiGatewayProperties.APIKeyRequired, Autorizer = apiGatewayProperties.Autorizer, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds, Concurrency = apiGatewayProperties.Concurrency, VPCSecurityGroupIdsParameterName = apiGatewayProperties.VPCSecurityGroupIdsParameterName, VPCSecurityGroup = apiGatewayProperties.VPCSecurityGroup, VPCSubnetIdsParameterName = apiGatewayProperties.VPCSubnetIdsParameterName, VPCSubnet = apiGatewayProperties.VPCSubnet });
                 }
             }
             return functionsList;
@@ -192,7 +192,7 @@ namespace Cloudformation4dotNET
                     Lambda.LambdaResourceProperties lambdaProperties =
                         (Lambda.LambdaResourceProperties)methodInfo.GetCustomAttribute(typeof(Lambda.LambdaResourceProperties));
                     if (lambdaProperties != null && !(lambdaProperties is APIGateway.APIGatewayResourceProperties))
-                        functionsList.Add(new ResourceProperties(null) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, TimeoutInSeconds = lambdaProperties.TimeoutInSeconds, Concurrency = lambdaProperties.Concurrency, VPCSecurityGroupIdsParameterName = lambdaProperties.VPCSecurityGroupIdsParameterName, VPCSubnetIdsParameterName = lambdaProperties.VPCSubnetIdsParameterName });
+                        functionsList.Add(new ResourceProperties(null) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, TimeoutInSeconds = lambdaProperties.TimeoutInSeconds, Concurrency = lambdaProperties.Concurrency, VPCSecurityGroupIdsParameterName = lambdaProperties.VPCSecurityGroupIdsParameterName, VPCSecurityGroup = lambdaProperties.VPCSecurityGroup, VPCSubnetIdsParameterName = lambdaProperties.VPCSubnetIdsParameterName, VPCSubnet = lambdaProperties.VPCSubnet });
                 }
             }
             return functionsList;
@@ -299,11 +299,24 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(3, "Role: !GetAtt myAPILambdaExecutionRole.Arn"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
                 // VPC Settings
-                if (function.VPCSecurityGroupIdsParameterName.Length > 0 && function.VPCSubnetIdsParameterName.Length > 0)
+                if ((function.VPCSecurityGroupIdsParameterName.Length > 0 || function.VPCSecurityGroup.Length > 0) && (function.VPCSubnetIdsParameterName.Length > 0 || function.VPCSubnet.Length > 0))
                 {
                     cloudformationResources.AppendLine(IndentText(3, "VpcConfig:"));
-                    cloudformationResources.AppendLine(IndentText(4, String.Format("SecurityGroupIds: !Ref {0} ", function.VPCSecurityGroupIdsParameterName)));
-                    cloudformationResources.AppendLine(IndentText(4, String.Format("SubnetIds: !Ref {0} ", function.VPCSubnetIdsParameterName)));
+                    if (function.VPCSecurityGroupIdsParameterName.Length > 0)
+                        cloudformationResources.AppendLine(IndentText(4, String.Format("SecurityGroupIds: !Ref {0} ", function.VPCSecurityGroupIdsParameterName)));
+                    else
+                    {
+                        cloudformationResources.AppendLine(IndentText(4, "SecurityGroupIds:"));
+                        cloudformationResources.AppendLine(IndentText(5, String.Format("- !Ref {0} ", function.VPCSecurityGroup)));
+                    }
+
+                    if (function.VPCSubnetIdsParameterName.Length > 0)
+                        cloudformationResources.AppendLine(IndentText(4, String.Format("SubnetIds: !Ref {0} ", function.VPCSubnetIdsParameterName)));
+                    else
+                    {
+                        cloudformationResources.AppendLine(IndentText(4, "SubnetIds:"));
+                        cloudformationResources.AppendLine(IndentText(5, String.Format("- !Ref {0} ", function.VPCSubnet)));
+                    }
                 }
 
                 cloudformationResources.AppendLine();
@@ -515,11 +528,24 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(3, "Role: !GetAtt myAPILambdaExecutionRole.Arn"));
                 cloudformationResources.AppendLine(IndentText(3, "Timeout: " + function.TimeoutInSeconds));
                 // VPC Settings
-                if (function.VPCSecurityGroupIdsParameterName.Length > 0 && function.VPCSubnetIdsParameterName.Length > 0)
+                if ((function.VPCSecurityGroupIdsParameterName.Length > 0 || function.VPCSecurityGroup.Length > 0) && (function.VPCSubnetIdsParameterName.Length > 0 || function.VPCSubnet.Length > 0))
                 {
                     cloudformationResources.AppendLine(IndentText(3, "VpcConfig:"));
-                    cloudformationResources.AppendLine(IndentText(4, String.Format("SecurityGroupIds: !Ref {0} ", function.VPCSecurityGroupIdsParameterName)));
-                    cloudformationResources.AppendLine(IndentText(4, String.Format("SubnetIds: !Ref {0} ", function.VPCSubnetIdsParameterName)));
+                    if (function.VPCSecurityGroupIdsParameterName.Length > 0)
+                        cloudformationResources.AppendLine(IndentText(4, String.Format("SecurityGroupIds: !Ref {0} ", function.VPCSecurityGroupIdsParameterName)));
+                    else
+                    {
+                        cloudformationResources.AppendLine(IndentText(4, "SecurityGroupIds:"));
+                        cloudformationResources.AppendLine(IndentText(5, String.Format("- !Ref {0} ", function.VPCSecurityGroup)));
+                    }
+
+                    if (function.VPCSubnetIdsParameterName.Length > 0)
+                        cloudformationResources.AppendLine(IndentText(4, String.Format("SubnetIds: !Ref {0} ", function.VPCSubnetIdsParameterName)));
+                    else
+                    {
+                        cloudformationResources.AppendLine(IndentText(4, "SubnetIds:"));
+                        cloudformationResources.AppendLine(IndentText(5, String.Format("- !Ref {0} ", function.VPCSubnet)));
+                    }
                 }
                 cloudformationResources.AppendLine();
 
