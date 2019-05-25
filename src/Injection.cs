@@ -171,7 +171,7 @@ namespace Cloudformation4dotNET
                     APIGateway.APIGatewayResourceProperties apiGatewayProperties =
                         (APIGateway.APIGatewayResourceProperties)methodInfo.GetCustomAttribute(typeof(APIGateway.APIGatewayResourceProperties));
                     if (apiGatewayProperties != null)
-                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, APIKeyRequired = apiGatewayProperties.APIKeyRequired, Autorizer = apiGatewayProperties.Autorizer, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds, Concurrency = apiGatewayProperties.Concurrency, VPCSecurityGroupIdsParameterName = apiGatewayProperties.VPCSecurityGroupIdsParameterName, VPCSecurityGroup = apiGatewayProperties.VPCSecurityGroup, VPCSubnetIdsParameterName = apiGatewayProperties.VPCSubnetIdsParameterName, VPCSubnet = apiGatewayProperties.VPCSubnet });
+                        functionsList.Add(new ResourceProperties(apiGatewayProperties?.PathPart ?? methodInfo.Name) { MethodClassPath = methodInfo.DeclaringType.FullName, MethodName = methodInfo.Name, APIKeyRequired = apiGatewayProperties.APIKeyRequired, Authorizer = apiGatewayProperties.Authorizer, EnableCORS = apiGatewayProperties.EnableCORS, TimeoutInSeconds = apiGatewayProperties.TimeoutInSeconds, Concurrency = apiGatewayProperties.Concurrency, VPCSecurityGroupIdsParameterName = apiGatewayProperties.VPCSecurityGroupIdsParameterName, VPCSecurityGroup = apiGatewayProperties.VPCSecurityGroup, VPCSubnetIdsParameterName = apiGatewayProperties.VPCSubnetIdsParameterName, VPCSubnet = apiGatewayProperties.VPCSubnet });
                 }
             }
             return functionsList;
@@ -232,7 +232,8 @@ namespace Cloudformation4dotNET
 
             cloudformationResources.AppendLine();
 
-            // create the authorizers
+            /*  The authorizer must be created on samx template
+            
             cloudformationResources.Append(AppendTitle("API Gateway authorizers"));
 
             List<string> authorizers = new List<string>();
@@ -259,6 +260,7 @@ namespace Cloudformation4dotNET
                 cloudformationResources.AppendLine(IndentText(4, "!Ref myAPI"));
                 cloudformationResources.AppendLine();
             }
+            */
 
             // create the root paths  
             cloudformationResources.Append(AppendTitle("API Gateway root paths"));
@@ -346,10 +348,10 @@ namespace Cloudformation4dotNET
 
                 cloudformationResources.AppendLine(IndentText(3, "HttpMethod: POST"));
 
-                if (function.Autorizer.Length > 0)
+                if (function.Authorizer.Length > 0)
                 {
                     cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: COGNITO_USER_POOLS"));
-                    cloudformationResources.AppendLine(IndentText(3, String.Format("AuthorizerId: !Ref {0}Authorizer", ReplaceNonAlphanumeric(function.Autorizer))));
+                    cloudformationResources.AppendLine(IndentText(3, String.Format("AuthorizerId: !Ref {0}", ReplaceNonAlphanumeric(function.Authorizer))));
                 }
                 else
                     cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));

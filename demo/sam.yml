@@ -64,6 +64,7 @@ Resources:
   # @INJECT
 
 Outputs:
+
   myAPIId:
     Description: API Gateway ID
     Value: !Ref myAPI
