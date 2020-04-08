@@ -10,7 +10,7 @@
     <PackageTags>dotnet;cf4dotnet</PackageTags>
     <PackAsTool>true</PackAsTool>
 
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <OutputType>exe</OutputType>
 
     <AssemblyName>dotnet-cf4dotnet</AssemblyName>
