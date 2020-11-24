@@ -447,11 +447,8 @@ namespace Cloudformation4dotNET
           cloudformationResources.AppendLine();
           break;
 
-        case "staging": // STAGING and PROD are contained into the same environment.
-        case "prod":
+        case "staging":
 
-
-          // StagingDeployment
           cloudformationResources.AppendLine(IndentText(1, "Staging:"));
           cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Stage"));
           cloudformationResources.AppendLine(IndentText(2, "DependsOn: myAPI"));
@@ -474,9 +471,10 @@ namespace Cloudformation4dotNET
             string functionCFResourceName = ReplaceNonAlphanumeric(function.MethodName);
             cloudformationResources.AppendLine(IndentText(3, String.Format("- {0}APIMethod", functionCFResourceName)));
           }
-
-          // ProdDeployment
           cloudformationResources.AppendLine();
+          break;
+        case "prod":
+
           cloudformationResources.AppendLine(IndentText(1, "Prod:"));
           cloudformationResources.AppendLine(IndentText(2, "Type: AWS::ApiGateway::Stage"));
           cloudformationResources.AppendLine(IndentText(2, "DependsOn: myAPI"));
