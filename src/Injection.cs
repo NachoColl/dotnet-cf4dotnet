@@ -44,6 +44,10 @@ namespace Cloudformation4dotNET
           var apiRate = config.Option("-r|--rate <api-rate>", "API Rate Limit (default: '100').", CommandOptionType.SingleValue);
           var apiBurst = config.Option("-rb|--burst <api-rate-burst>", "API Rate Burst (default: '200').", CommandOptionType.SingleValue);
 
+          // external API Authorizer
+          var externalAuthorizerId = config.Option("-xa|--external-authorizer <yes/no> (default: 'no')", "Defines if the API authorizer is an external reference.", CommandOptionType.SingleValue);
+
+
           var environmentKey = config.Option("-e|--environment <dev/test/qa/staging/prod>", "Environment (default: 'prod').", CommandOptionType.SingleValue);
           var accountsConfiguration = config.Option("-c|--configuration <2-accounts>", "Accounts configuration (default: '2-accounts').", CommandOptionType.SingleValue);
           var buildVersion = config.Option("-b|--build <build-version>", "Build version number used to create incremental resources (default: '1').", CommandOptionType.SingleValue);
@@ -68,7 +72,8 @@ namespace Cloudformation4dotNET
                                         lambdasPrefix.HasValue() ? lambdasPrefix.Values[0] : "myapi-",
                                         apiName.HasValue() ? apiName.Values[0] : "api",
                                         apiRate.HasValue() ? apiRate.Values[0] : "100",
-                                        apiBurst.HasValue() ? apiBurst.Values[0] : "200");
+                                        apiBurst.HasValue() ? apiBurst.Values[0] : "200",
+                                        externalAuthorizerId.HasValue() ? (externalAuthorizerId.Values[0].Equals("yes") ? true : false) : false);
                     }
                     else
                     {
@@ -91,7 +96,7 @@ namespace Cloudformation4dotNET
       }
     }
 
-    static int api(string dllSourceFile, string environmentKey = "prod", int buildVersion = 1, string outputPah = "./", string prefix = "myapi-", string name = "api", string rate = "100", string burst = "200")
+    static int api(string dllSourceFile, string environmentKey = "prod", int buildVersion = 1, string outputPah = "./", string prefix = "myapi-", string name = "api", string rate = "100", string burst = "200", bool externalAuthorizerId = false)
     {
 
       try
@@ -110,7 +115,7 @@ namespace Cloudformation4dotNET
 
         // Build the cloudformation API Gateway related resources string to inject (including lambdas).
         List<ResourceProperties> APIFunctionsList = GetAPIFunctions(assembly);
-        string cloudformationAPIResources = GetCloudformationAPIResourcesString(assemblyName, APIFunctionsList, environmentKey, prefix, name, rate, burst);
+        string cloudformationAPIResources = GetCloudformationAPIResourcesString(assemblyName, APIFunctionsList, environmentKey, prefix, name, rate, burst, externalAuthorizerId);
 
         // Build the cloudformation Lambdas related resources string to inject.
         List<ResourceProperties> LambdaFunctionsList = GetLambdaFunctions(assembly, assemblyName);
@@ -198,7 +203,7 @@ namespace Cloudformation4dotNET
       return functionsList;
     }
 
-    static string GetCloudformationAPIResourcesString(string AssemblyName, List<ResourceProperties> functions, string Environment, string NamePrefix, string ApiName, string ApiRate, string ApiBurst)
+    static string GetCloudformationAPIResourcesString(string AssemblyName, List<ResourceProperties> functions, string Environment, string NamePrefix, string ApiName, string ApiRate, string ApiBurst, bool externalAuthorizerId =false)
     {
 
       StringBuilder cloudformationResources = new StringBuilder();
@@ -351,7 +356,7 @@ namespace Cloudformation4dotNET
         if (function.Authorizer.Length > 0)
         {
           cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: COGNITO_USER_POOLS"));
-          cloudformationResources.AppendLine(IndentText(3, String.Format("AuthorizerId: !Ref {0}", ReplaceNonAlphanumeric(function.Authorizer))));
+          cloudformationResources.AppendLine(IndentText(3, String.Format("AuthorizerId: " + (externalAuthorizerId ? "" : "!Ref") + " {0}", ReplaceNonAlphanumeric(function.Authorizer))));
         }
         else
           cloudformationResources.AppendLine(IndentText(3, "AuthorizationType: NONE"));
