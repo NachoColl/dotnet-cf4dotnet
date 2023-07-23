@@ -6,7 +6,7 @@
     <Description>Create AWS Cloudformation templates from dotNET code.</Description>
 
     <PackageId>NachoColl.Cloudformation4dotNET</PackageId> 
-    <PackageVersion>6.1.000</PackageVersion>
+    <PackageVersion>7.1.000</PackageVersion>
     <PackageTags>dotnet;cf4dotnet</PackageTags>
     <PackAsTool>true</PackAsTool>
 
